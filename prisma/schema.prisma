@@ -10,4 +10,86 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url = env("DATABASE_URL")
 }
+
+// --- Before starting off with any models, we will define some enums (types), no tables are created for them ---
+
+
+// User Roles within Masar defined as an enum to limit the User
+// to only one of 4 possible roles
+// Reflects requirement(s) UR-STU-001​, UR-UNI-001​, UR-CO-001​, UR-AC-001​
+enum Role {
+  STUDENT
+  ACADEMIC
+  PROVIDER
+  ADMIN
+}
+
+// ProviderType also defined as an enum, that's since a provider can only
+// belong to one of 3 groups and no other
+// Reflects requirement(s) UR-UNI-002, UR-CO-002​
+enum ProviderType {
+  UNIVERSITY
+  TRAINING_CENTER
+  COMPANY
+}
+
+// Work mode for provider posts defined as an enum to limit it to
+// the only 3 possible choices
+// Reflects requirement(s) UR-UNI-017, UR-CO-017​
+enum WorkMode {
+  ONLINE
+  ONSITE
+  HYBRID
+}
+
+// The following enum "CompanyVerificationStatus" encompasses the
+// possible verification results (done by admin via the dashboard) post
+// providing a commercial registration number or national company number
+// Reflects requirement(s) UR-CO-009, SR-CO-009
+enum CompanyVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// The following enum "OpportunityType" encompasses the available opportunity types
+// ISSUE: Requirements that clearly reflect the opportunity types
+// were not found, opportunity types referenced from scope statement
+// REVISE
+enum OpportunityType {
+  INTERNSHIP
+  WORKSHOP
+  VOLUNTEERING
+  COURSE
+}
+
+// The following enum "OpportunityStatus" encompasses the possible responses
+// that would be provided to a student post registering to it
+// Similarly to OpportunityType there dont seem to be Requirements
+// clearly detailing what happens after a student applies to an opportunity
+// whether or not a provider is notified of the student's application
+// and the mechanism as so how the provider would accept or deny 
+// the student's application
+enum OpportunityStatus {
+  APPLIED // indicates that a student has applied and their application is pending provider response
+  ACCEPTED // indicates that a student is accepted to avail the opportunity
+  REJECTED // indicates that a student has not been accepted by the provider
+  ENROLLED // indicates that the student is already enrolled within that opportunity and has not completed it yet
+  COMPLETED // indicates that a student has successfully completed the opportunity and received the appropriate experience points / rewards associated with that opportunity
+  // could possibly add STARRED to save the opportunity for quick access
+}
+
+// The following enum "RoadmapProgressStatus" indicates a student's progress 
+// within a specific roadmap node
+// Reflects requirement(s) UR-STU-018
+enum RoadmapProgressStatus {
+  NOT_STARTED // the student hasn't explored this node yet
+  COMPLETED // the student has marked the node as completed
+  // there is no partial completion, a node is either complete or not
+}
+
+
+
+
