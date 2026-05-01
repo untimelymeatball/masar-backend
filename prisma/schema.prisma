@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
 }
 
 // --- Before starting off with any models, we will define some enums (types), no tables are created for them ---
@@ -81,14 +80,427 @@ enum OpportunityStatus {
   // could possibly add STARRED to save the opportunity for quick access
 }
 
-// The following enum "RoadmapProgressStatus" indicates a student's progress 
+// The following enum "NodeProgressStatus" indicates a student's progress 
 // within a specific roadmap node
 // Reflects requirement(s) UR-STU-018
-enum RoadmapProgressStatus {
+enum NodeProgressStatus {
   NOT_STARTED // the student hasn't explored this node yet
   COMPLETED // the student has marked the node as completed
   // there is no partial completion, a node is either complete or not
 }
+
+// The following enum "RoadmapProgressStatus" indicates a student's state
+// within a specific roadmap
+enum RoadmapProgressStatus {
+  ENROLLED // The student is working on a specific roadmap
+  COMPLETED // The student completed the roadmap (able to select a new one)
+  ABANDONED // The student abandones their current roadmap (able to select a new one)
+}
+
+// The following enum "ProviderAccountStatus" reflects the standing of a provider
+// account as determined by admin actions post-verification
+// Reflects requirement(s) UR-AD-003
+enum ProviderAccountStatus {
+  ACTIVE    // account is in good standing
+  WARNED    // admin has issued a warning
+  SUSPENDED // admin has restricted the account
+}
+
+// The following enum "AssessmentProgressStatus" indicates a student's progress
+// with regards to the assessment
+enum AssessmentProgressStatus {
+  IN_PROGRESS // The student has started the assessment but has not fully completed it
+  COMPLETED // The student has successfully completed the assessment
+}
+
+
+
+
+// --- End of Enums ---
+
+// User model is ONLY responsible for handling identity and auth, role-based models will be made to handle role-specific data such as "organization type"
+model User {
+  id String @id @default(uuid()) // generates a UUID for every new user
+  username String @unique // unique username for every user
+  email String @unique // unique to ensure that a unique email can register one and only one account
+  password String
+  role Role // specifies the user's role within Masar for role-based access
+  studentProfile  StudentProfile?
+  academicProfile AcademicProfile?
+  providerProfile ProviderProfile?
+  createdAt DateTime @default(now())  // auto-set's the account creation date and time as soon as it happens
+  updatedAt DateTime @updatedAt // auto-set's the date and time of any information update as soon as it happens
+}
+
+
+// StudentProfile is a model specifically made to house the details of any user whose Role matches "Student"
+// This model reflects requirements UR-STU-002, UR-STU-003, SR-STU-002, SR-STU-003
+model StudentProfile {
+  id String @id @default(uuid()) // generates a UUID for every student profile
+  userId String @unique // foreign key to id in model User, links the profile to a user
+  user User @relation(fields: [userId], references: [id])
+  firstName String
+  lastName String
+  studentId String
+  phone String
+  province String
+  birthdate DateTime
+  major String
+  educationLevel String
+  graduationYear Int
+  profilePicture String? // link to a path/url with the picture
+  bio String?
+  skills Skill[]
+  roadmapEnrollments StudentRoadmap[]
+  nodeProgress StudentRoadmapProgress[]
+  applications OpportunityApplication[]
+  feedback Feedback[]
+  reports Report[]
+  assessment StudentAssessment?
+  stats StudentStats? // back-reference to StudentStats, model made to track points and level
+  badges StudentBadge[] // back-reference to StudentBadge (join table between students and badges earned)
+  academicId String? // FK to AcademicProfile
+  academic AcademicProfile? @relation(fields: [academicId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Skill is the model that's associated with the skills that students can
+// choose to add to their profile
+model Skill {
+  id String @id @default(uuid())
+  name String @unique
+  students StudentProfile[]
+}
+
+// AcademicProfile is a model made to house details of users with role "Academic Staff"
+// This model refelects requirements UR-AC-002, UR-AC-004, UR-AC-005, UR-AC-006, SR-AC-002, SR-AC-004, SR-AC-005
+model AcademicProfile {
+  id String @id @default(uuid())
+  userId String @unique // foreign key to id in model user
+  user User @relation(fields: [userId], references: [id])
+  firstName String
+  lastName String
+  phone String
+  university String // to be selected from a dropdown menu reflects UR-AC-002
+  department String // reflects UR-AC-004
+  // academic responsibility not added as a field due to insignificance
+  role String
+  // tenure not added due to insignificance
+  profilePicture String? // link to a path/url with the picture
+  bio String?
+  affiliationCode String? // auto-generated for every academic staff when triggered
+  students StudentProfile[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+// ProviderProfile is a model made to house the detauls of users with role "Provider"
+// This model covers all three provider types (university, training center, company)
+// Reflects requirements UR-UNI-003, UR-UNI-006, UR-UNI-007, UR-CO-003, UR-CO-006, UR-CO-007, UR-CO-008, UR-CO-009
+model ProviderProfile {
+  id String @id @default(uuid())
+  userId String @unique // foreign key to id in model user
+  user User @relation(fields: [userId], references: [id])
+  providerType ProviderType // limited to one of the three choices
+  organizationName String
+  firstName String // name of person registering / representing the org
+  lastName String
+  phone String
+  email String // official org email (non-personal)
+  location String? // required for companies
+  website String? // optionally add provider website link
+  description String // providers are required to add a description of their org
+  // UR-CO-007 will not be added "role, tenure, dept", the personal information
+  // of the representative is insignificant
+  profilePicture String? // link to a path/url with the picture
+  // bio field not required as description does that
+  registrationNumber String? // commercial reg number, reflects UR-CO-009
+  verificationStatus CompanyVerificationStatus @default(PENDING) // enum, defaults to PENDING
+  accountStatus ProviderAccountStatus @default(ACTIVE) // admin-controlled standing post-verification
+  opportunities Opportunity[]
+  reports Report[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// CareerPath is the model that encompasses career tracks such as "Software Eng"
+// Each specific CareerPath groups specific nodes into it's available roadmaps
+// So generally a CareerPath has many Roadmaps, Roadmap has many nodes
+// The student chooses a roadmap (only one active roadmap at a time) and
+// they can either complete it or abandon it to explore other roadmaps
+model CareerPath {
+  id String @id @default(uuid())
+  name String @unique
+  roadmaps Roadmap[] // one-to-many relationship with "Roadmap"
+  tags Tag[] // many-to-many relationship with Tag
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Roadmap is the model that houses the details for a specific Roadmap that
+// belongs to a specific career
+// As we've stated above, multiple Roadmaps can belong to a single CareerPath
+// so the relationship is one-to-many
+model Roadmap {
+  id String @id @default(uuid())
+  name String @unique
+  // Relations on the "many side" require two separate fields, the raw FK column and the relation field
+  careerPathId String // This will act as the actual FK column in this relation
+  careerPath   CareerPath @relation(fields: [careerPathId], references: [id]) // This is the actual Prisma relation
+  nodes RoadmapNode[]
+  enrollments StudentRoadmap[]
+  badge Badge? // back-reference to Badge, represents the badge awarded after roadmap completion
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// RoadmapNode is the model that represents a single node and it's associated learning
+// resources within any specific Roadmap
+// The relationship between Roadmap and RoadmapNode is one-to-many
+// There will be no sequence to the nodes implemented here as it will add
+// out-of-scope complexity, the webiste will visually display the correct order
+// to navigate the roadmap but students can choose whatever node they wish to at
+// any point in time
+model RoadmapNode {
+  id String @id @default(uuid())
+  title String
+  description String // Houses all the resources related to a node
+  pointValue Int // How much points/XP is this node worth?
+  roadmapId String // FK field in RoadmapNode
+  roadmap Roadmap @relation(fields: [roadmapId], references: [id]) // Relation to model Roadmap
+  progress StudentRoadmapProgress[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// No model will be made for resources, RoadmapNode.description will handle
+// the listing of all resources
+
+// StudentRoadmap is tasked with recording a student's enrollment in a roadmap
+// It's essentially a join table that records students' enrollments
+// This helps in keeping track of students' enrollments so that academic staff
+// can easily access this information
+model StudentRoadmap {
+  id String @id @default(uuid())
+  studentId String // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id]) // Links a roadmap to a student
+  roadmapId String // FK to Roadmap
+  roadmap Roadmap @relation(fields: [roadmapId], references: [id]) // References a roadmap
+  status RoadmapProgressStatus @default(ENROLLED)
+  enrolledAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// StudentRoadmapProgress tracks students progression within a roadmap at a
+// single node level, unlike StudentRoadmap that tracks general enrollment
+model StudentRoadmapProgress {
+  id String @id @default(uuid())
+  studentId String // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id]) // References a student in StudentProfile
+  nodeId String // FK to RoadmapNode
+  node RoadmapNode @relation(fields: [nodeId], references: [id]) // References RoadmapNode
+  status NodeProgressStatus @default(NOT_STARTED)
+  updatedAt DateTime @updatedAt
+  @@unique ([studentId, nodeId]) // Compound unique constraint, a student cant have multiple progress records for the same node
+}
+
+// --- Opportunity Models ---
+
+// Opportunity will act as a model to house the details of a single provider
+// post, regardless of what kind of opportunity it is
+model Opportunity {
+  id String @id @default(uuid())
+  title String
+  expectedHours Int // The amount of hours the opportunity will roughly last
+  providerId String // FK to ProviderProfile
+  provider ProviderProfile @relation(fields: [providerId], references: [id])
+  description String
+  externalLink String? // external application link
+  type OpportunityType // limits it to the types specified in the enum
+  workMode WorkMode // limits it to the types specific in the enum
+  location String? 
+  deadline DateTime? // application close date
+  capacity Int? // maximum number of people needed for the opportunity
+  tags OpportunityTag[]
+  applications OpportunityApplication[]
+  feedback Feedback[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// OpportunityApplication is a join table between StudentProfile and
+// Opportunity, it records every application as in which student applied
+// to what opportunity and what the status of their application is
+model OpportunityApplication {
+  id String @id @default(uuid())
+  studentId String // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  opportunityId String // FK to Opportunity
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+  status OpportunityStatus @default(APPLIED)
+  appliedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique ([studentId, opportunityId]) // Compound unique constraint to prevent a student from applying to the same opportunity twice
+}
+
+// OpportunityTag stores predefined skill/category labels that providers
+// assign to their opportunities for discoverability
+model OpportunityTag {
+  id String @id @default(uuid())
+  name String @unique
+  opportunities Opportunity[]
+}
+
+
+// Feedback houses the feedback information provided by students
+// regarding a specific opportunity
+model Feedback {
+  studentId String // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  opportunityId String // FK to Opportunity
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+  @@id([studentId, opportunityId])
+  rating Int
+  comment String?
+  submittedAt DateTime @default(now())
+}
+
+// Report houses information regarding a report submitted against a specific
+// opportunity
+model Report {
+  id String @id @default(uuid())
+  studentId String // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  providerId String // FK to ProviderProfile
+  provider ProviderProfile @relation(fields: [providerId], references: [id])
+  reason String
+  createdAt DateTime @default(now())
+}
+
+
+// --- Gamification Models ---
+
+// SystemConfig is only a key-value store to house the point rate per hour
+// configurable by admin without touching code
+model SystemConfig {
+  key String @id
+  value String
+}
+
+// Level defines Point/XP thresholds per each level
+model Level {
+  level Int @id
+  requiredPoints Int
+}
+
+// Badge holds the badge information that are given out as rewards for completing
+// nodes, roadmaps, opportunities
+model Badge {
+  id String @id @default(uuid())
+  name String
+  description String
+  imageUrl String?
+  roadmapId String? @unique // FK to Roadmap, nullable since not all badges are linked to a specific roadmap completion
+  roadmap Roadmap? @relation(fields: [roadmapId], references: [id])
+  earnedBy StudentBadge[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+// StudentStats has a one-to-one relationship with StudentProfile
+// It tracks the points and level of a student
+model StudentStats {
+  id String @id @default(uuid())
+  studentId String @unique // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  points Int @default(0)
+  level Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// StudentBadge is a join table that displays a specific students badges
+// and when they were earned
+model StudentBadge {
+  id String @id @default(uuid())
+  studentId String // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  badgeId String // FK to Badge
+  badge Badge @relation(fields: [badgeId], references: [id])
+  obtainedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([studentId, badgeId]) // Compound unique constraint, a student can't receive the same badge twice
+}
+
+
+// --- Assessment Modules --- 
+
+// Tag stores the named labels that are shared by different options within
+// the assessment questions and career paths. Has a many-to-many relationship
+// with CareerPath as a tag can apply to many career paths and vice versa
+model Tag {
+  id String @id @default(uuid())
+  label String @unique
+  careers CareerPath[] // many-to-many relationship with CareerPath
+  options AssessmentOption[] // many-to-many relationship with AssessmentOption
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// AssessmentQuestion will store everything related to a specific question
+// within the assessment
+model AssessmentQuestion {
+  id String @id @default(uuid())
+  question String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  answer StudentAssessmentAnswer[]
+  options AssessmentOption[]
+}
+
+// AssessmentOption stores one choice for a question, each choice is tagged
+// with relevant career tags
+model AssessmentOption {
+  id String @id @default(uuid())
+  option String
+  tags Tag[] // many-to-many relationship with Tag
+  answer StudentAssessmentAnswer[]
+  questionId String
+  question   AssessmentQuestion @relation(fields: [questionId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// StudentAssessment marks when a student completes the assessment, one entry
+// per student only
+model StudentAssessment {
+  id String @id @default(uuid())
+  studentId String @unique // FK to StudentProfile
+  student StudentProfile @relation(fields: [studentId], references: [id])
+  status AssessmentProgressStatus @default(IN_PROGRESS)
+  answer StudentAssessmentAnswer[]
+  takenAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// StudentAssessmentAnswer stores the options students picked for a specific
+// question
+model StudentAssessmentAnswer {
+  id String @id @default(uuid())
+  assessmentId String // FK to StudentAssessment
+  assessment StudentAssessment @relation(fields: [assessmentId], references: [id])
+  questionId String // FK to AssessmentQuestion
+  question AssessmentQuestion @relation(fields: [questionId], references: [id])
+  optionId String // FK to AssessmentOption
+  option AssessmentOption @relation(fields: [optionId], references: [id])
+  @@unique([assessmentId, questionId]) // One answer per question per session
+
+}
+
+
 
 
 
