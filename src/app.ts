@@ -1,5 +1,5 @@
-// imports the express library
-import express from 'express';
+import express from 'express'; // imports the express library
+import { router as authRouter } from "./presentation/routes/auth.routes"
 
 // function to create an instance of "app"
 // function gets called
@@ -7,6 +7,12 @@ const app = express();
 
 // registers a middleware
 app.use(express.json());
+
+// every route inside auth.routes.ts gets prefixed with /auth
+// so /register becomes /auth/register
+app.use("/auth", authRouter)
+
+
 
 // makes app available for import
 export default app;

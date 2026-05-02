@@ -1,3 +1,4 @@
+import "dotenv/config"
 // imports configured express app
 import app from './app';
 
