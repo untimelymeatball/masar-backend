@@ -113,6 +113,15 @@ enum AssessmentProgressStatus {
   COMPLETED // The student has successfully completed the assessment
 }
 
+// The following enum "OnboardingStatus" tracks where a student is in the
+// registration funnel, from initial profile creation to full onboarding
+// Reflects the Student Registration Workflow
+enum OnboardingStatus {
+  PENDING_VERIFICATION // Profile submitted, email not yet verified
+  PENDING_ONBOARDING   // Email verified, objectives not yet selected
+  COMPLETED            // Fully onboarded and ready to use the platform
+}
+
 
 
 
@@ -125,6 +134,9 @@ model User {
   email String @unique // unique to ensure that a unique email can register one and only one account
   password String
   role Role // specifies the user's role within Masar for role-based access
+  isEmailVerified       Boolean   @default(false) // tracks whether the user has verified their email
+  emailVerificationToken String?  @unique // token sent to the user's email for verification
+  emailVerificationExpiry DateTime? // expiry date for the verification token
   studentProfile  StudentProfile?
   academicProfile AcademicProfile?
   providerProfile ProviderProfile?
@@ -141,15 +153,24 @@ model StudentProfile {
   user User @relation(fields: [userId], references: [id])
   firstName String
   lastName String
-  studentId String
+  studentId String @unique // unique university-issued student ID
   phone String
   province String
+  city        String? // city within the province, optional for existing records
   birthdate DateTime
   major String
   educationLevel String
   graduationYear Int
   profilePicture String? // link to a path/url with the picture
   bio String?
+  interests   String[] // career interests e.g. ["AI", "Web Development"]
+  hobbies     String[] // personal hobbies
+  talents     String[] // self-identified talents
+  cvLink      String?  // URL to student's CV
+  portfolioLink String? // URL to student's portfolio
+  preferences String[] // career/work preferences for assessment prefill
+  onboardingStatus OnboardingStatus @default(PENDING_VERIFICATION) // tracks the student's progress through the registration funnel
+  objectives StudentObjective[] // onboarding objectives selected by the student
   skills Skill[]
   roadmapEnrollments StudentRoadmap[]
   nodeProgress StudentRoadmapProgress[]
@@ -231,10 +252,14 @@ model ProviderProfile {
 // The student chooses a roadmap (only one active roadmap at a time) and
 // they can either complete it or abandon it to explore other roadmaps
 model CareerPath {
-  id String @id @default(uuid())
-  name String @unique
-  roadmaps Roadmap[] // one-to-many relationship with "Roadmap"
-  tags Tag[] // many-to-many relationship with Tag
+  id          String @id @default(uuid())
+  name        String @unique
+  slug        String @unique // URL-friendly identifier e.g. "frontend", "ai-engineer"
+  description String?
+  roadmaps     Roadmap[] // one-to-many relationship with "Roadmap"
+  tags         Tag[] // many-to-many relationship with Tag
+  traits       CareerTrait[] // one-to-many: the 0-5 trait profile for this career
+  roadmapItems CareerRoadmapItem[] // one-to-many: lightweight ordered topic list
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -442,10 +467,12 @@ model StudentBadge {
 // the assessment questions and career paths. Has a many-to-many relationship
 // with CareerPath as a tag can apply to many career paths and vice versa
 model Tag {
-  id String @id @default(uuid())
+  id    String @id @default(uuid())
   label String @unique
-  careers CareerPath[] // many-to-many relationship with CareerPath
-  options AssessmentOption[] // many-to-many relationship with AssessmentOption
+  key   String @unique // camelCase identifier e.g. "codingIntensity", used as JSON keys in score profiles
+  careers      CareerPath[] // many-to-many relationship with CareerPath
+  options      AssessmentOptionTag[] // Explicit many-to-many relationship with AssessmentOption
+  careerTraits CareerTrait[] // back-relation to CareerTrait (the career x tag matrix)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -453,8 +480,11 @@ model Tag {
 // AssessmentQuestion will store everything related to a specific question
 // within the assessment
 model AssessmentQuestion {
-  id String @id @default(uuid())
-  question String
+  id           String   @id @default(uuid())
+  assessmentId String // FK to Assessment
+  assessment   Assessment @relation(fields: [assessmentId], references: [id])
+  question     String
+  order        Int // display order within the assessment (1-based)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   answer StudentAssessmentAnswer[]
@@ -464,14 +494,26 @@ model AssessmentQuestion {
 // AssessmentOption stores one choice for a question, each choice is tagged
 // with relevant career tags
 model AssessmentOption {
-  id String @id @default(uuid())
+  id     String @id @default(uuid())
   option String
-  tags Tag[] // many-to-many relationship with Tag
+  order  Int // display order within the question (1-based)
+  tags   AssessmentOptionTag[] // Explicit many-to-many relationship with Tag
   answer StudentAssessmentAnswer[]
   questionId String
   question   AssessmentQuestion @relation(fields: [questionId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// AssessmentOptionTag is an explicit join table between AssessmentOption and Tag
+// It includes a weight field to reflect the magnitude of the tag for a specific option
+model AssessmentOptionTag {
+  optionId String
+  option   AssessmentOption @relation(fields: [optionId], references: [id])
+  tagId    String
+  tag      Tag @relation(fields: [tagId], references: [id])
+  weight   Int // The 0-5 scale weighting for the tag
+  @@id([optionId, tagId])
 }
 
 // StudentAssessment marks when a student completes the assessment, one entry
@@ -501,7 +543,90 @@ model StudentAssessmentAnswer {
 }
 
 
+// --- Assessment Parent & Career Matching Models ---
+
+// Assessment groups questions under a named assessment (e.g. "Career Discovery Assessment")
+model Assessment {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  questions   AssessmentQuestion[]
+  results     UserAssessmentResult[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// CareerTrait stores one cell of the career x tag matrix
+// e.g. Frontend + Creativity = 5, Frontend + Math Level = 1
+model CareerTrait {
+  id       String @id @default(uuid())
+  careerId String
+  tagId    String
+  value    Float // 0-5 scale representing how important this trait is for the career
+
+  career CareerPath @relation(fields: [careerId], references: [id])
+  tag    Tag        @relation(fields: [tagId], references: [id])
+
+  @@unique([careerId, tagId])
+}
+
+// RoadmapTopic is a lightweight learning topic label (e.g. "HTML", "Docker", "Python")
+// shared across multiple careers
+model RoadmapTopic {
+  id      String @id @default(uuid())
+  name    String @unique
+  slug    String @unique
+  careers CareerRoadmapItem[]
+}
+
+// CareerRoadmapItem links a career to its recommended learning topics in order
+model CareerRoadmapItem {
+  id       String @id @default(uuid())
+  careerId String
+  topicId  String
+  order    Int // display order within the career's roadmap
+
+  career CareerPath   @relation(fields: [careerId], references: [id])
+  topic  RoadmapTopic @relation(fields: [topicId], references: [id])
+
+  @@unique([careerId, topicId])
+}
+
+// UserAssessmentResult stores the computed output of an assessment submission:
+// raw tag scores, normalized 0-5 profile, and ranked career matches
+model UserAssessmentResult {
+  id               String   @id @default(uuid())
+  userId           String? // optional: allows anonymous submissions
+  assessmentId     String
+  assessment       Assessment @relation(fields: [assessmentId], references: [id])
+  rawScores        Json // { codingIntensity: 12, mathLevel: 5, ... }
+  normalizedScores Json // { codingIntensity: 3.4, mathLevel: 2.1, ... }
+  careerMatches    Json // [{ careerId, careerName, matchPercentage, reasons, roadmap }]
+  createdAt        DateTime @default(now())
+}
 
 
+// --- Student Onboarding Models ---
 
+// OnboardingObjective stores the predefined options students can choose
+// during onboarding to indicate what they are looking for on the platform
+// Reflects the Student Registration Workflow (step 5)
+model OnboardingObjective {
+  id        String @id @default(uuid())
+  key       String @unique // machine key e.g. "improve_skills", "explore_careers", "track_progress"
+  label     String // human-readable display text
+  students  StudentObjective[]
+  createdAt DateTime @default(now())
+}
 
+// StudentObjective is a join table linking a student to their selected
+// onboarding objectives (many-to-many)
+model StudentObjective {
+  id          String @id @default(uuid())
+  studentId   String // FK to StudentProfile
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+  objectiveId String // FK to OnboardingObjective
+  objective   OnboardingObjective @relation(fields: [objectiveId], references: [id])
+  createdAt   DateTime @default(now())
+  @@unique([studentId, objectiveId]) // prevent duplicate selections
+}

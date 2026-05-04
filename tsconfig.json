@@ -39,10 +39,11 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   // excluding prisma config as it's a typescript file that lives
   // outside of src, not excluding it causes an error within
   // this config file
-  "exclude": ["prisma.config.ts", "node_modules"]
+  "exclude": ["prisma.config.ts", "prisma", "node_modules"]
 }
