@@ -6,6 +6,19 @@ import { Router } from "express";
 import { authenticate, requireRole } from "../middleware/auth.middleware";
 import { Role } from "../../generated/prisma/enums";
 import { generateAffiliationCode, getProfile, getStudentAnalytics, getStudents, updateProfile } from "../../application/academic.service";
+import { z } from "zod";
+
+// schema to validate academic profile update requests
+const updateProfileSchema = z.object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    phone: z.string().min(1),
+    university: z.string().min(1),
+    department: z.string().min(1),
+    role: z.string().min(1),
+    profilePicture: z.string().optional(),
+    bio: z.string().optional(),
+})
 
 const router = Router()
 
@@ -32,7 +45,7 @@ router.get("/profile", ...guard, async (req, res) => {
 router.put("/profile", ...guard, async (req, res) => {
     try {
         const { userId } = req.user!
-        const data = req.body
+        const data = updateProfileSchema.parse(req.body)
         const profile = await updateProfile(userId, data)
         res.status(200).json(profile)
     } catch (error: any) {
