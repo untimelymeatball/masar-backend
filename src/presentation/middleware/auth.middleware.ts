@@ -6,11 +6,12 @@
 
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken"
-import { Role } from "../../generated/prisma/enums";
+import { ProviderAccountStatus, Role } from "../../generated/prisma/enums";
+import { prisma } from "../../infrastructure/prisma";
 
 // authenticate is a function that takes three Express objects. The
 // Request, Response, and NextFunction, these are TypeScript types
-function authenticate(req: Request, res: Response, next: NextFunction) {
+async function authenticate(req: Request, res: Response, next: NextFunction) {
     // Line 14 reads the authorization header from the incoming request
     // and takes it as a whole string
     const authHeader = req.headers.authorization
@@ -35,6 +36,18 @@ function authenticate(req: Request, res: Response, next: NextFunction) {
         // it throws an error
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as unknown as { userId: string, role: Role }
         req.user = decoded // attached the decoded payload onto req so the next middleware or route handler can acces it via req.user
+
+        if (decoded.role === Role.PROVIDER) {
+            const profile = await prisma.providerProfile.findUnique({
+                where: { userId: decoded.userId },
+                select: { accountStatus: true }
+            })
+            if (profile?.accountStatus === ProviderAccountStatus.SUSPENDED) {
+                res.status(403).json({ error: "Your account has been suspended" })
+                return
+            }
+        }
+
         next() // hands the request to whatever comes next due to checks passing
     } catch {
         // errors thrown by jwt.verify are caught here and the request

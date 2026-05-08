@@ -1,7 +1,7 @@
 // This file defines the HTTP endpoints and connects them to the relevant
 // service. For example when a POST /auth/register request comes in, this
 // handler reads the body, calls register(), and sends back a response.
-// This file contains no logic, just HTTP call comes in, service gets 
+// This file contains no logic, just HTTP call comes in, service gets
 // called, response out.
 
 import { Router } from "express";

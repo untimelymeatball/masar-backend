@@ -132,7 +132,6 @@ model User {
   updatedAt DateTime @updatedAt // auto-set's the date and time of any information update as soon as it happens
 }
 
-
 // StudentProfile is a model specifically made to house the details of any user whose Role matches "Student"
 // This model reflects requirements UR-STU-002, UR-STU-003, SR-STU-002, SR-STU-003
 model StudentProfile {

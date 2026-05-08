@@ -15,16 +15,16 @@ import { Role } from "../generated/prisma/enums";
 // 2. Hashes the password
 // 3. Creates the User record in the database
 async function register(email: string, username: string, password: string, role: Role) {
-    const existing = await prisma.user.findUnique({ 
+    const existing = await prisma.user.findUnique({
         where: { email: email } // checks if a user exists with that email
-    }) 
+    })
     if (existing) // if a user does exist an error is thrown
         throw new Error("Email already in use")
 
     // hash the password
-    const hashedPassword = await bcrypt.hash(password, 12) 
-    // 12 is the cost factor, the higher the number, 
-    // the slower the hashing which results in the password being harder 
+    const hashedPassword = await bcrypt.hash(password, 12)
+    // 12 is the cost factor, the higher the number,
+    // the slower the hashing which results in the password being harder
     // to brute force but also slower on the server side
 
     // create the user record in the database withh the passed parameters
@@ -32,7 +32,7 @@ async function register(email: string, username: string, password: string, role:
     const user = await prisma.user.create({
         data: {email, username, password: hashedPassword, role}
     })
-    
+
     const { password: _, ...userWithoutPassword } = user
     return userWithoutPassword
 }

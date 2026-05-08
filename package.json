@@ -1,4 +1,7 @@
 {
+  "prisma": {
+    "seed": "ts-node --files/prisma/seed.ts"
+  },
   "name": "masar-backend",
   "version": "1.0.0",
   "description": "",
