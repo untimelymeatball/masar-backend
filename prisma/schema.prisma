@@ -140,6 +140,7 @@ model User {
   studentProfile  StudentProfile?
   academicProfile AcademicProfile?
   providerProfile ProviderProfile?
+  assessmentResults UserAssessmentResult[]
   createdAt DateTime @default(now())  // auto-set's the account creation date and time as soon as it happens
   updatedAt DateTime @updatedAt // auto-set's the date and time of any information update as soon as it happens
 }
@@ -550,6 +551,7 @@ model Assessment {
   id          String   @id @default(uuid())
   title       String
   description String?
+  isActive    Boolean  @default(false) // marks the current default assessment
   questions   AssessmentQuestion[]
   results     UserAssessmentResult[]
   createdAt   DateTime @default(now())
@@ -597,12 +599,16 @@ model CareerRoadmapItem {
 model UserAssessmentResult {
   id               String   @id @default(uuid())
   userId           String? // optional: allows anonymous submissions
+  user             User?    @relation(fields: [userId], references: [id])
   assessmentId     String
   assessment       Assessment @relation(fields: [assessmentId], references: [id])
+  submittedAnswers Json // [{ questionId, optionId }]
   rawScores        Json // { codingIntensity: 12, mathLevel: 5, ... }
   normalizedScores Json // { codingIntensity: 3.4, mathLevel: 2.1, ... }
   careerMatches    Json // [{ careerId, careerName, matchPercentage, reasons, roadmap }]
   createdAt        DateTime @default(now())
+
+  @@unique([userId, assessmentId]) // enforce single attempt per student
 }
 
 

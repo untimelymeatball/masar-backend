@@ -7,6 +7,8 @@
 // GET   /me                    — get full student dashboard (requires verified email)
 // PATCH /me                    — update core profile fields (requires verified email)
 // PATCH /profile-enrichment    — update optional enrichment fields (requires verified email)
+// GET   /me/assessment-results        — all past assessment results (requires verified email)
+// GET   /me/assessment-results/latest — latest assessment result (requires verified email)
 
 import { Router } from "express"
 import { authenticate, requireRole, requireEmailVerified } from "../middleware/auth.middleware"
@@ -27,6 +29,11 @@ import {
     updateEnrichmentSchema,
     validateRequest
 } from "../../application/dashboard.validation"
+import {
+    getAssessmentResults,
+    getLatestAssessmentResult,
+    ServiceError
+} from "../../application/studentAssessment.service"
 
 const router = Router()
 
@@ -215,6 +222,39 @@ router.patch("/profile-enrichment", ...verifiedStudentGuard, async (req, res) =>
             res.status(404).json({ error: error.message })
         } else {
             console.error("Update enrichment error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── GET /me/assessment-results ─────────────────────────────────────────────
+// Returns all past assessment results for the authenticated student.
+// Sorted newest first. Does not expose internal scoring data.
+router.get("/me/assessment-results", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const results = await getAssessmentResults(req.user!.userId)
+        res.status(200).json({ results })
+    } catch (error: any) {
+        if (error instanceof ServiceError) {
+            res.status(error.statusCode).json({ error: error.message })
+        } else {
+            console.error("Get assessment results error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── GET /me/assessment-results/latest ──────────────────────────────────────
+// Returns the latest assessment result, or null if none exists.
+router.get("/me/assessment-results/latest", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const result = await getLatestAssessmentResult(req.user!.userId)
+        res.status(200).json({ result })
+    } catch (error: any) {
+        if (error instanceof ServiceError) {
+            res.status(error.statusCode).json({ error: error.message })
+        } else {
+            console.error("Get latest assessment result error:", error)
             res.status(500).json({ error: "Internal server error" })
         }
     }

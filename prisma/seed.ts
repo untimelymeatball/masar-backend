@@ -75,6 +75,7 @@ async function main() {
       title: "Career Discovery Assessment",
       description:
         "Discover which tech career path best matches your natural strengths, interests, and thinking style.",
+      isActive: true,
     },
   });
   console.log(`   ✅ Assessment created: "${assessment.title}" (${assessment.id})\n`);
