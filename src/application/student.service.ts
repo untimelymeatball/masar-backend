@@ -5,6 +5,9 @@
 import { prisma } from "../infrastructure/prisma"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
+import { GamificationService } from "./gamification.service"
+import { XP_RULES } from "../config/gamification"
+import { BadgeService } from "./badge.service"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -152,6 +155,15 @@ async function verifyEmail(token: string) {
         }
     })
 
+    // Gamification Hook: Email Verified
+    await GamificationService.awardXp(
+        user.id,
+        "EMAIL_VERIFIED",
+        user.id,
+        XP_RULES.EMAIL_VERIFIED,
+        "Email verified"
+    )
+
     return { message: "Email verified successfully" }
 }
 
@@ -266,5 +278,4 @@ async function getStudentProfile(userId: string) {
         }
     }
 }
-
 export { registerStudent, verifyEmail, saveOnboardingObjectives, getStudentProfile }

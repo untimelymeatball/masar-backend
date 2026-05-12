@@ -4,6 +4,7 @@
 
 import { prisma } from "../infrastructure/prisma"
 import crypto from "crypto"
+import { GamificationService } from "./gamification.service"
 import type { UpdateProfileInput, UpdateEnrichmentInput } from "./dashboard.validation"
 
 // ─── 1. getStudentDashboard ─────────────────────────────────────────────────
@@ -223,7 +224,7 @@ async function updateStudentProfile(userId: string, data: UpdateProfileInput) {
         console.log("═══════════════════════════════════════════════════════════")
     }
 
-    return {
+    const response = {
         message: emailChanged
             ? "Profile updated successfully. Email changed — please verify your new email address."
             : "Profile updated successfully",
@@ -247,6 +248,11 @@ async function updateStudentProfile(userId: string, data: UpdateProfileInput) {
             }
         }
     }
+
+    // Check for profile completeness XP
+    await GamificationService.checkProfileCompleteness(userId)
+
+    return response
 }
 
 // ─── 3. updateProfileEnrichment ─────────────────────────────────────────────
@@ -287,6 +293,9 @@ async function updateProfileEnrichment(userId: string, data: UpdateEnrichmentInp
             preferences: true
         }
     })
+
+    // Check for profile completeness XP
+    await GamificationService.checkProfileCompleteness(userId)
 
     return {
         message: "Enrichment data updated successfully",

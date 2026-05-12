@@ -5,6 +5,9 @@
 import { Router } from "express";
 import { authenticate, requireRole } from "../middleware/auth.middleware";
 import { Role } from "../../generated/prisma/enums";
+import { ProviderAnalyticsService } from "../../application/providerAnalytics.service";
+import { opportunityIdParamSchema } from "../../application/providerAnalytics.validation";
+import { validateRequest } from "../../application/dashboard.validation";
 
 const router = Router()
 
@@ -69,13 +72,46 @@ router.delete("/opportunities/:id", ...guard, async (_req, res) => {
     }
 })
 
-// UR-UNI-015 / UR-CO-015: view analytics for a specific post (engagement, interested students, feedback)
-router.get("/opportunities/:id/analytics", ...guard, async (_req, res) => {
+// --- Analytics ---
+
+// GET /providers/me/analytics/summary
+router.get("/me/analytics/summary", ...guard, async (req, res) => {
     try {
-        res.json({ message: "GET opportunity analytics" })
+        const summary = await ProviderAnalyticsService.getProviderAnalyticsSummary(req.user!.userId)
+        res.status(200).json({
+            success: true,
+            data: summary
+        })
     } catch (error: any) {
-        res.status(500).json({ error: error.message })
+        console.error("Provider analytics summary error:", error)
+        const status = error.statusCode || 500
+        res.status(status).json({ success: false, message: error.message })
     }
+})
+
+// UR-UNI-015 / UR-CO-015: view analytics for a specific post
+router.get("/me/opportunities/:opportunityId/analytics", ...guard, async (req, res) => {
+    const paramValidation = validateRequest(opportunityIdParamSchema, { params: req.params })
+    if (!paramValidation.success) {
+        return res.status(400).json({ success: false, errors: paramValidation.errors })
+    }
+
+    try {
+        const analytics = await ProviderAnalyticsService.getOpportunityAnalytics(req.user!.userId, req.params.opportunityId as string)
+        res.status(200).json({
+            success: true,
+            data: analytics
+        })
+    } catch (error: any) {
+        console.error("Opportunity analytics error:", error)
+        const status = error.statusCode || 500
+        res.status(status).json({ success: false, message: error.message })
+    }
+})
+
+// Legacy compat redirect or just removal
+router.get("/opportunities/:id/analytics", ...guard, (req, res) => {
+    res.redirect(301, `/provider/me/opportunities/${req.params.id}/analytics`)
 })
 
 export { router }

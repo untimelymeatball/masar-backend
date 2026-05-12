@@ -5,6 +5,8 @@
 
 import { prisma } from "../infrastructure/prisma"
 import { submitAssessment } from "./assessment.service"
+import { GamificationService } from "./gamification.service"
+import { XP_RULES } from "../config/gamification"
 import type { AssessmentSubmissionInput } from "./assessment.validation"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -198,6 +200,17 @@ async function submitStudentAssessment(
     // Update the StudentAssessment record to mark as COMPLETED
     await upsertStudentAssessment(userId)
 
+    // Gamification Hook: Assessment Completed
+    if (result && result.resultId) {
+        await GamificationService.awardXp(
+            userId,
+            "ASSESSMENT_COMPLETED",
+            result.resultId,
+            XP_RULES.ASSESSMENT_COMPLETED,
+            "Completed the career matching assessment"
+        )
+    }
+
     return result
 }
 
@@ -329,6 +342,8 @@ async function mergeEnrichmentData(userId: string, body: AssessmentSubmissionInp
             })
         }
     }
+    // ── Gamification Hook: Profile Completeness ─────────────────────────
+    await GamificationService.checkProfileCompleteness(userId)
 }
 
 // Upserts the StudentAssessment record to mark the student's assessment
@@ -351,6 +366,14 @@ async function upsertStudentAssessment(userId: string) {
             status: "COMPLETED"
         }
     })
+}
+
+export const StudentAssessmentService = {
+    getActiveAssessment,
+    startAssessment,
+    submitStudentAssessment,
+    getAssessmentResults,
+    getLatestAssessmentResult
 }
 
 export {

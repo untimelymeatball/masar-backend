@@ -40,7 +40,7 @@ async function main() {
   console.log("🌱 Starting seed...\n");
 
   // ── 1. Upsert Tags ─────────────────────────────────────────────────────
-  console.log("1/7 Seeding tags...");
+  console.log("1/8 Seeding tags...");
   const tagRecords: Record<string, string> = {}; // label → id
 
   for (const label of assessmentData.tags) {
@@ -59,7 +59,7 @@ async function main() {
   console.log(`   ✅ ${Object.keys(tagRecords).length} tags seeded\n`);
 
   // ── 2. Create Assessment ───────────────────────────────────────────────
-  console.log("2/7 Seeding assessment...");
+  console.log("2/8 Seeding assessment...");
 
   // Delete existing assessment data for idempotency
   // (delete in reverse dependency order)
@@ -81,7 +81,7 @@ async function main() {
   console.log(`   ✅ Assessment created: "${assessment.title}" (${assessment.id})\n`);
 
   // ── 3. Create Questions, Options, and Option-Tag weights ───────────────
-  console.log("3/7 Seeding questions & options...");
+  console.log("3/8 Seeding questions & options...");
   let questionCount = 0;
   let optionCount = 0;
 
@@ -131,7 +131,7 @@ async function main() {
   console.log(`   ✅ ${questionCount} questions and ${optionCount} options seeded\n`);
 
   // ── 4. Upsert Career Paths with traits ─────────────────────────────────
-  console.log("4/7 Seeding career paths & traits...");
+  console.log("4/8 Seeding career paths & traits...");
 
   // Clear existing career traits for idempotency
   await prisma.careerTrait.deleteMany({});
@@ -182,7 +182,7 @@ async function main() {
   console.log(`   ✅ ${careerCount} careers and ${traitCount} traits seeded\n`);
 
   // ── 5. Upsert Roadmap Topics ───────────────────────────────────────────
-  console.log("5/7 Seeding roadmap topics...");
+  console.log("5/8 Seeding roadmap topics...");
 
   // Collect all unique topic names across all careers
   const allTopicNames = new Set<string>();
@@ -208,7 +208,7 @@ async function main() {
   console.log(`   ✅ ${allTopicNames.size} roadmap topics seeded\n`);
 
   // ── 6. Create Career ↔ Roadmap Topic links ────────────────────────────
-  console.log("6/7 Seeding career roadmap items...");
+  console.log("6/8 Seeding career roadmap items...");
   let roadmapItemCount = 0;
 
   for (const careerData of careersData.careers) {
@@ -242,7 +242,7 @@ async function main() {
   console.log(`   ✅ ${roadmapItemCount} career-roadmap links seeded\n`);
 
   // ── 7. Upsert Onboarding Objectives ──────────────────────────────────
-  console.log("7/7 Seeding onboarding objectives...");
+  console.log("7/8 Seeding onboarding objectives...");
 
   const objectives = [
     { key: "improve_skills", label: "Opportunities to improve skills and practically apply them" },
@@ -259,6 +259,43 @@ async function main() {
   }
   console.log(`   ✅ ${objectives.length} onboarding objectives seeded\n`);
 
+  // ── 8. Generate Default Roadmap Tasks ─────────────────────────────────
+  console.log("8/8 Seeding roadmap tasks...");
+
+  // Clear existing tasks for idempotency (delete progress first due to FK)
+  await prisma.userRoadmapTaskProgress.deleteMany({});
+  await prisma.userRoadmapItemProgress.deleteMany({});
+  await prisma.roadmapTask.deleteMany({});
+
+  // Fetch all roadmap items with their topic names
+  const allRoadmapItems = await prisma.careerRoadmapItem.findMany({
+    include: { topic: true },
+    orderBy: [{ careerId: "asc" }, { order: "asc" }]
+  });
+
+  let taskCount = 0;
+  for (const item of allRoadmapItems) {
+    const topicName = item.topic.name;
+
+    const defaultTasks = [
+      { title: `Complete learning material for ${topicName}`, order: 1 },
+      { title: `Complete practice exercise for ${topicName}`, order: 2 },
+      { title: `Mark ${topicName} as understood`, order: 3 }
+    ];
+
+    for (const task of defaultTasks) {
+      await prisma.roadmapTask.create({
+        data: {
+          roadmapItemId: item.id,
+          title: task.title,
+          order: task.order
+        }
+      });
+      taskCount++;
+    }
+  }
+  console.log(`   ✅ ${taskCount} roadmap tasks seeded (${allRoadmapItems.length} items × 3 tasks)\n`);
+
   // ── Summary ────────────────────────────────────────────────────────────
   console.log("═══════════════════════════════════════════");
   console.log("🎉 Seed completed successfully!");
@@ -271,6 +308,7 @@ async function main() {
   console.log(`   Topics:        ${allTopicNames.size}`);
   console.log(`   Roadmap Links: ${roadmapItemCount}`);
   console.log(`   Objectives:    ${objectives.length}`);
+  console.log(`   Tasks:         ${taskCount}`);
   console.log("═══════════════════════════════════════════");
 }
 
@@ -284,4 +322,3 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-

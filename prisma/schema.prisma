@@ -97,6 +97,14 @@ enum RoadmapProgressStatus {
   ABANDONED // The student abandones their current roadmap (able to select a new one)
 }
 
+// The following enum "RoadmapItemStatus" tracks a student's progress state
+// on a single CareerRoadmapItem (topic within a career roadmap)
+enum RoadmapItemStatus {
+  NOT_STARTED  // student hasn't started this item
+  IN_PROGRESS  // student has completed some tasks but not all
+  COMPLETED    // all tasks completed, points awarded
+}
+
 // The following enum "ProviderAccountStatus" reflects the standing of a provider
 // account as determined by admin actions post-verification
 // Reflects requirement(s) UR-AD-003
@@ -125,6 +133,13 @@ enum OnboardingStatus {
 
 
 
+enum OpportunityInteractionStatus {
+  INTERESTED
+  NOT_PARTICIPATED
+  PARTICIPATED
+  FEEDBACK_SUBMITTED
+}
+
 // --- End of Enums ---
 
 // User model is ONLY responsible for handling identity and auth, role-based models will be made to handle role-specific data such as "organization type"
@@ -141,6 +156,15 @@ model User {
   academicProfile AcademicProfile?
   providerProfile ProviderProfile?
   assessmentResults UserAssessmentResult[]
+  selectedCareers    StudentSelectedCareer[]
+  roadmapItemProgress UserRoadmapItemProgress[]
+  roadmapTaskProgress UserRoadmapTaskProgress[]
+  gamification    StudentGamification?
+  xpEvents        StudentXpEvent[]
+  badges          StudentBadge[]
+  opportunityInteractions StudentOpportunityInteraction[]
+  opportunityFeedback     OpportunityFeedback[]
+  practicalHourEvents     PracticalHourEvent[]
   createdAt DateTime @default(now())  // auto-set's the account creation date and time as soon as it happens
   updatedAt DateTime @updatedAt // auto-set's the date and time of any information update as soon as it happens
 }
@@ -179,8 +203,6 @@ model StudentProfile {
   feedback Feedback[]
   reports Report[]
   assessment StudentAssessment?
-  stats StudentStats? // back-reference to StudentStats, model made to track points and level
-  badges StudentBadge[] // back-reference to StudentBadge (join table between students and badges earned)
   academicId String? // FK to AcademicProfile
   academic AcademicProfile? @relation(fields: [academicId], references: [id])
   createdAt DateTime @default(now())
@@ -242,6 +264,7 @@ model ProviderProfile {
   verificationStatus CompanyVerificationStatus @default(PENDING) // enum, defaults to PENDING
   accountStatus ProviderAccountStatus @default(ACTIVE) // admin-controlled standing post-verification
   opportunities Opportunity[]
+  opportunityFeedback OpportunityFeedback[]
   reports Report[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -261,6 +284,7 @@ model CareerPath {
   tags         Tag[] // many-to-many relationship with Tag
   traits       CareerTrait[] // one-to-many: the 0-5 trait profile for this career
   roadmapItems CareerRoadmapItem[] // one-to-many: lightweight ordered topic list
+  selectedBy   StudentSelectedCareer[] // students who selected this career
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -277,7 +301,6 @@ model Roadmap {
   careerPath   CareerPath @relation(fields: [careerPathId], references: [id]) // This is the actual Prisma relation
   nodes RoadmapNode[]
   enrollments StudentRoadmap[]
-  badge Badge? // back-reference to Badge, represents the badge awarded after roadmap completion
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -352,8 +375,16 @@ model Opportunity {
   tags OpportunityTag[]
   applications OpportunityApplication[]
   feedback Feedback[]
+  opportunityFeedback OpportunityFeedback[]
+  studentInteractions StudentOpportunityInteraction[]
+  isPublished Boolean @default(false)
+  isApproved  Boolean @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  practicalHourEvents PracticalHourEvent[]
+  reports             Report[]
 }
 
 // OpportunityApplication is a join table between StudentProfile and
@@ -393,16 +424,45 @@ model Feedback {
   submittedAt DateTime @default(now())
 }
 
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  REJECTED
+}
+
+enum ReportReason {
+  MISLEADING_INFORMATION
+  UNPROFESSIONAL_BEHAVIOR
+  SCAM_OR_FRAUD
+  INAPPROPRIATE_CONTENT
+  SAFETY_CONCERN
+  DISCRIMINATION_OR_HARASSMENT
+  OTHER
+}
+
 // Report houses information regarding a report submitted against a specific
-// opportunity
+// provider or opportunity
 model Report {
-  id String @id @default(uuid())
-  studentId String // FK to StudentProfile
-  student StudentProfile @relation(fields: [studentId], references: [id])
-  providerId String // FK to ProviderProfile
-  provider ProviderProfile @relation(fields: [providerId], references: [id])
-  reason String
-  createdAt DateTime @default(now())
+  id            String       @id @default(uuid())
+  studentId     String       // FK to StudentProfile
+  student       StudentProfile @relation(fields: [studentId], references: [id])
+  providerId    String       // FK to ProviderProfile
+  provider      ProviderProfile @relation(fields: [providerId], references: [id])
+  opportunityId String?      // Optional: related opportunity
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
+  reason        ReportReason
+  description   String
+  status        ReportStatus @default(PENDING)
+  adminNotes    String?
+  reviewedAt    DateTime?
+  reviewedBy    String?      // Admin User ID
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([studentId, providerId])
+  @@index([providerId, status])
+  @@index([status, createdAt])
 }
 
 
@@ -419,46 +479,6 @@ model SystemConfig {
 model Level {
   level Int @id
   requiredPoints Int
-}
-
-// Badge holds the badge information that are given out as rewards for completing
-// nodes, roadmaps, opportunities
-model Badge {
-  id String @id @default(uuid())
-  name String
-  description String
-  imageUrl String?
-  roadmapId String? @unique // FK to Roadmap, nullable since not all badges are linked to a specific roadmap completion
-  roadmap Roadmap? @relation(fields: [roadmapId], references: [id])
-  earnedBy StudentBadge[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-}
-
-// StudentStats has a one-to-one relationship with StudentProfile
-// It tracks the points and level of a student
-model StudentStats {
-  id String @id @default(uuid())
-  studentId String @unique // FK to StudentProfile
-  student StudentProfile @relation(fields: [studentId], references: [id])
-  points Int @default(0)
-  level Int @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// StudentBadge is a join table that displays a specific students badges
-// and when they were earned
-model StudentBadge {
-  id String @id @default(uuid())
-  studentId String // FK to StudentProfile
-  student StudentProfile @relation(fields: [studentId], references: [id])
-  badgeId String // FK to Badge
-  badge Badge @relation(fields: [badgeId], references: [id])
-  obtainedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@unique([studentId, badgeId]) // Compound unique constraint, a student can't receive the same badge twice
 }
 
 
@@ -590,6 +610,8 @@ model CareerRoadmapItem {
 
   career CareerPath   @relation(fields: [careerId], references: [id])
   topic  RoadmapTopic @relation(fields: [topicId], references: [id])
+  tasks  RoadmapTask[] // checklist tasks for this roadmap item
+  userProgress UserRoadmapItemProgress[] // per-student progress records
 
   @@unique([careerId, topicId])
 }
@@ -635,4 +657,180 @@ model StudentObjective {
   objective   OnboardingObjective @relation(fields: [objectiveId], references: [id])
   createdAt   DateTime @default(now())
   @@unique([studentId, objectiveId]) // prevent duplicate selections
+}
+
+
+// --- Student Career Selection ---
+
+// StudentSelectedCareer records a student's chosen career path from their
+// assessment recommendations. A student may select 1–3 career paths.
+// Application-level enforcement limits selections to 3.
+model StudentSelectedCareer {
+  id           String     @id @default(uuid())
+  userId       String     // FK to User (matches UserAssessmentResult.userId)
+  user         User       @relation(fields: [userId], references: [id])
+  careerPathId String     // FK to CareerPath
+  careerPath   CareerPath @relation(fields: [careerPathId], references: [id])
+  selectedAt   DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([userId, careerPathId]) // prevent duplicate selection of the same career
+}
+
+
+// --- Roadmap Progress Tracking ---
+
+// RoadmapTask stores checklist items that belong to a CareerRoadmapItem.
+// Each roadmap item (topic) has 2-3 default tasks seeded from the seed script.
+model RoadmapTask {
+  id             String @id @default(uuid())
+  roadmapItemId  String // FK to CareerRoadmapItem
+  roadmapItem    CareerRoadmapItem @relation(fields: [roadmapItemId], references: [id])
+  title          String
+  description    String?
+  order          Int // display order within the item
+  userProgress   UserRoadmapTaskProgress[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// UserRoadmapItemProgress tracks a student's progress on a single
+// CareerRoadmapItem. Stores status, completion date, and one-time point award.
+model UserRoadmapItemProgress {
+  id             String   @id @default(uuid())
+  userId         String   // FK to User
+  user           User     @relation(fields: [userId], references: [id])
+  roadmapItemId  String   // FK to CareerRoadmapItem
+  roadmapItem    CareerRoadmapItem @relation(fields: [roadmapItemId], references: [id])
+  status         RoadmapItemStatus @default(NOT_STARTED)
+  progressPercentage Float @default(0) // 0-100
+  completedAt    DateTime?
+  pointsAwarded  Int      @default(0) // once set > 0, never reversed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, roadmapItemId])
+}
+
+// UserRoadmapTaskProgress tracks a student's completion state on a single
+// RoadmapTask (checklist item). Per-user, per-task.
+model UserRoadmapTaskProgress {
+  id          String   @id @default(uuid())
+  userId      String   // FK to User
+  user        User     @relation(fields: [userId], references: [id])
+  taskId      String   // FK to RoadmapTask
+  task        RoadmapTask @relation(fields: [taskId], references: [id])
+  isCompleted Boolean  @default(false)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, taskId])
+}
+
+// --- Gamification System ---
+
+// StudentGamification tracks a student's total XP, current level,
+// and progress towards the next level.
+model StudentGamification {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id])
+  totalXp                Int      @default(0)
+  level                  Int      @default(1)
+  currentLevelXp         Int      @default(0)
+  nextLevelXp            Int      @default(100)
+  verifiedPracticalHours Int      @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+// StudentXpEvent logs every instance where XP is awarded.
+// The unique constraint on [userId, sourceType, sourceId] prevents
+// duplicate XP for the same action (e.g., completing the same roadmap item twice).
+model StudentXpEvent {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  sourceType String   // e.g., "ROADMAP_ITEM_COMPLETED", "ASSESSMENT_COMPLETED"
+  sourceId   String   // ID of the related record (e.g., UserRoadmapItemProgress ID)
+  xpAmount   Int
+  reason     String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, sourceType, sourceId])
+}
+
+// PracticalHourEvent logs every instance where practical hours are awarded.
+// Idempotency is enforced by unique(userId, sourceType, sourceId).
+model PracticalHourEvent {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  hours         Int
+  sourceType    String      // e.g., "OPPORTUNITY_FEEDBACK"
+  sourceId      String      // e.g., opportunityId
+  opportunityId String?
+  feedbackId    String?
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
+  feedback      OpportunityFeedback? @relation(fields: [feedbackId], references: [id])
+  description   String?
+  createdAt     DateTime    @default(now())
+
+  @@unique([userId, sourceType, sourceId])
+}
+
+
+// StudentBadge records when a student unlocks a badge or trophy
+model StudentBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  badgeId   String   // Matches the ID in badges.json
+  earnedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([userId, badgeId]) // prevent duplicate badge awards
+}
+
+// StudentOpportunityInteraction tracks lightweight interest and participation
+// flow independent of the formal provider application.
+model StudentOpportunityInteraction {
+  id                    String                       @id @default(uuid())
+  userId                String
+  user                  User                         @relation(fields: [userId], references: [id])
+  opportunityId         String
+  opportunity           Opportunity                  @relation(fields: [opportunityId], references: [id])
+  status                OpportunityInteractionStatus @default(INTERESTED)
+  interestedAt          DateTime                     @default(now())
+  attendanceConfirmedAt DateTime?
+  participated          Boolean?
+  feedbackSubmittedAt   DateTime?
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
+
+  @@unique([userId, opportunityId])
+}
+
+// OpportunityFeedback replaces the legacy Feedback model, mapping to the User
+// rather than StudentProfile, allowing gamification tracking.
+model OpportunityFeedback {
+  id                  String          @id @default(uuid())
+  userId              String
+  user                User            @relation(fields: [userId], references: [id])
+  opportunityId       String
+  opportunity         Opportunity     @relation(fields: [opportunityId], references: [id])
+  providerId          String
+  provider            ProviderProfile @relation(fields: [providerId], references: [id])
+  ratingOverall       Int
+  ratingContent       Int?
+  ratingOrganization  Int?
+  ratingCommunication Int?
+  comment             String?
+  isAnonymous         Boolean         @default(true)
+  createdAt           DateTime        @default(now())
+
+  @@unique([userId, opportunityId])
+  practicalHourEvents PracticalHourEvent[]
 }
