@@ -1,0 +1,436 @@
+{
+  "careers": [
+    {
+      "name": "Frontend",
+      "slug": "frontend",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 1,
+        "creativity": 5,
+        "systemDesign": 2,
+        "userInteraction": 5,
+        "infrastructureSystems": 1,
+        "securityFocus": 1,
+        "dataAiFocus": 1,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 3,
+        "collaborationCommunication": 4
+      },
+      "roadmap": ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Vue", "Angular", "Next.js", "Design System"]
+    },
+    {
+      "name": "Backend",
+      "slug": "backend",
+      "traits": {
+        "codingIntensity": 5,
+        "mathLevel": 2,
+        "creativity": 2,
+        "systemDesign": 5,
+        "userInteraction": 1,
+        "infrastructureSystems": 4,
+        "securityFocus": 3,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Node.js", "Java", "Spring Boot", "ASP.NET Core", "PHP", "Laravel", "Django", "Ruby", "Ruby on Rails", "GraphQL", "API Design", "SQL", "PostgreSQL", "MongoDB", "Redis"]
+    },
+    {
+      "name": "Full Stack",
+      "slug": "full-stack",
+      "traits": {
+        "codingIntensity": 5,
+        "mathLevel": 2,
+        "creativity": 4,
+        "systemDesign": 4,
+        "userInteraction": 4,
+        "infrastructureSystems": 3,
+        "securityFocus": 2,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 4
+      },
+      "roadmap": ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Angular", "Vue", "Node.js", "SQL", "API Design", "Git and GitHub"]
+    },
+    {
+      "name": "DevOps",
+      "slug": "devops",
+      "traits": {
+        "codingIntensity": 3,
+        "mathLevel": 1,
+        "creativity": 2,
+        "systemDesign": 5,
+        "userInteraction": 1,
+        "infrastructureSystems": 5,
+        "securityFocus": 4,
+        "dataAiFocus": 1,
+        "hardwareInteraction": 2,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Linux", "Docker", "Kubernetes", "Terraform", "AWS", "Shell / Bash", "Cloudflare"]
+    },
+    {
+      "name": "DevSecOps",
+      "slug": "devsecops",
+      "traits": {
+        "codingIntensity": 3,
+        "mathLevel": 1,
+        "creativity": 2,
+        "systemDesign": 5,
+        "userInteraction": 1,
+        "infrastructureSystems": 5,
+        "securityFocus": 5,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 2,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Linux", "Docker", "Kubernetes", "Terraform", "AWS", "Cloudflare", "AI Red Teaming"]
+    },
+    {
+      "name": "Data Analyst",
+      "slug": "data-analyst",
+      "traits": {
+        "codingIntensity": 2,
+        "mathLevel": 4,
+        "creativity": 2,
+        "systemDesign": 1,
+        "userInteraction": 4,
+        "infrastructureSystems": 1,
+        "securityFocus": 1,
+        "dataAiFocus": 4,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 3,
+        "collaborationCommunication": 5
+      },
+      "roadmap": ["SQL", "Python", "Data Structures & Algorithms"]
+    },
+    {
+      "name": "AI Engineer",
+      "slug": "ai-engineer",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 5,
+        "creativity": 3,
+        "systemDesign": 3,
+        "userInteraction": 2,
+        "infrastructureSystems": 3,
+        "securityFocus": 2,
+        "dataAiFocus": 5,
+        "hardwareInteraction": 1,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Python", "Machine Learning", "AI Agents", "Prompt Engineering"]
+    },
+    {
+      "name": "AI and Data Scientist",
+      "slug": "ai-data-scientist",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 5,
+        "creativity": 3,
+        "systemDesign": 2,
+        "userInteraction": 2,
+        "infrastructureSystems": 2,
+        "securityFocus": 1,
+        "dataAiFocus": 5,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Python", "Machine Learning", "SQL", "Data Structures & Algorithms"]
+    },
+    {
+      "name": "Data Engineer",
+      "slug": "data-engineer",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 3,
+        "creativity": 2,
+        "systemDesign": 4,
+        "userInteraction": 1,
+        "infrastructureSystems": 5,
+        "securityFocus": 2,
+        "dataAiFocus": 5,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["SQL", "Python", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"]
+    },
+    {
+      "name": "Android",
+      "slug": "android",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 1,
+        "creativity": 4,
+        "systemDesign": 3,
+        "userInteraction": 5,
+        "infrastructureSystems": 1,
+        "securityFocus": 2,
+        "dataAiFocus": 1,
+        "hardwareInteraction": 3,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Kotlin"]
+    },
+    {
+      "name": "iOS",
+      "slug": "ios",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 1,
+        "creativity": 4,
+        "systemDesign": 3,
+        "userInteraction": 5,
+        "infrastructureSystems": 1,
+        "securityFocus": 2,
+        "dataAiFocus": 1,
+        "hardwareInteraction": 3,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Swift & Swift UI"]
+    },
+    {
+      "name": "Machine Learning",
+      "slug": "machine-learning",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 5,
+        "creativity": 3,
+        "systemDesign": 2,
+        "userInteraction": 1,
+        "infrastructureSystems": 2,
+        "securityFocus": 1,
+        "dataAiFocus": 5,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 2
+      },
+      "roadmap": ["Python", "Data Structures & Algorithms"]
+    },
+    {
+      "name": "PostgreSQL",
+      "slug": "postgresql",
+      "traits": {
+        "codingIntensity": 3,
+        "mathLevel": 3,
+        "creativity": 1,
+        "systemDesign": 4,
+        "userInteraction": 1,
+        "infrastructureSystems": 4,
+        "securityFocus": 3,
+        "dataAiFocus": 4,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 2
+      },
+      "roadmap": ["SQL"]
+    },
+    {
+      "name": "Blockchain",
+      "slug": "blockchain",
+      "traits": {
+        "codingIntensity": 5,
+        "mathLevel": 4,
+        "creativity": 3,
+        "systemDesign": 4,
+        "userInteraction": 1,
+        "infrastructureSystems": 4,
+        "securityFocus": 5,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 2
+      },
+      "roadmap": []
+    },
+    {
+      "name": "QA",
+      "slug": "qa",
+      "traits": {
+        "codingIntensity": 2,
+        "mathLevel": 1,
+        "creativity": 2,
+        "systemDesign": 2,
+        "userInteraction": 2,
+        "infrastructureSystems": 2,
+        "securityFocus": 2,
+        "dataAiFocus": 1,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 4
+      },
+      "roadmap": ["Code Review"]
+    },
+    {
+      "name": "Software Architect",
+      "slug": "software-architect",
+      "traits": {
+        "codingIntensity": 2,
+        "mathLevel": 2,
+        "creativity": 3,
+        "systemDesign": 5,
+        "userInteraction": 3,
+        "infrastructureSystems": 5,
+        "securityFocus": 3,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 1,
+        "debuggingTesting": 3,
+        "collaborationCommunication": 5
+      },
+      "roadmap": ["System Design", "Design and Architecture"]
+    },
+    {
+      "name": "Cyber Security",
+      "slug": "cyber-security",
+      "traits": {
+        "codingIntensity": 3,
+        "mathLevel": 2,
+        "creativity": 3,
+        "systemDesign": 4,
+        "userInteraction": 1,
+        "infrastructureSystems": 4,
+        "securityFocus": 5,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 2,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 2
+      },
+      "roadmap": ["Linux", "Shell / Bash", "AI Red Teaming"]
+    },
+    {
+      "name": "UX Design",
+      "slug": "ux-design",
+      "traits": {
+        "codingIntensity": 1,
+        "mathLevel": 0,
+        "creativity": 5,
+        "systemDesign": 2,
+        "userInteraction": 5,
+        "infrastructureSystems": 0,
+        "securityFocus": 0,
+        "dataAiFocus": 1,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 2,
+        "collaborationCommunication": 5
+      },
+      "roadmap": ["Design System"]
+    },
+    {
+      "name": "Game Developer",
+      "slug": "game-developer",
+      "traits": {
+        "codingIntensity": 5,
+        "mathLevel": 4,
+        "creativity": 5,
+        "systemDesign": 3,
+        "userInteraction": 2,
+        "infrastructureSystems": 2,
+        "securityFocus": 1,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 2,
+        "debuggingTesting": 4,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["C++"]
+    },
+    {
+      "name": "Server Side Game Developer",
+      "slug": "server-side-game-developer",
+      "traits": {
+        "codingIntensity": 5,
+        "mathLevel": 3,
+        "creativity": 2,
+        "systemDesign": 5,
+        "userInteraction": 1,
+        "infrastructureSystems": 5,
+        "securityFocus": 3,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 1,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["C++", "Node.js"]
+    },
+    {
+      "name": "MLOps",
+      "slug": "mlops",
+      "traits": {
+        "codingIntensity": 4,
+        "mathLevel": 3,
+        "creativity": 2,
+        "systemDesign": 5,
+        "userInteraction": 1,
+        "infrastructureSystems": 5,
+        "securityFocus": 3,
+        "dataAiFocus": 5,
+        "hardwareInteraction": 1,
+        "debuggingTesting": 5,
+        "collaborationCommunication": 3
+      },
+      "roadmap": ["Python", "Docker", "Kubernetes", "Terraform", "AWS"]
+    },
+    {
+      "name": "Product Manager",
+      "slug": "product-manager",
+      "traits": {
+        "codingIntensity": 0,
+        "mathLevel": 1,
+        "creativity": 3,
+        "systemDesign": 3,
+        "userInteraction": 5,
+        "infrastructureSystems": 1,
+        "securityFocus": 1,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 1,
+        "collaborationCommunication": 5
+      },
+      "roadmap": []
+    },
+    {
+      "name": "Developer Relations",
+      "slug": "developer-relations",
+      "traits": {
+        "codingIntensity": 2,
+        "mathLevel": 1,
+        "creativity": 4,
+        "systemDesign": 2,
+        "userInteraction": 5,
+        "infrastructureSystems": 1,
+        "securityFocus": 1,
+        "dataAiFocus": 2,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 2,
+        "collaborationCommunication": 5
+      },
+      "roadmap": ["Git and GitHub"]
+    },
+    {
+      "name": "BI Analyst",
+      "slug": "bi-analyst",
+      "traits": {
+        "codingIntensity": 2,
+        "mathLevel": 4,
+        "creativity": 2,
+        "systemDesign": 2,
+        "userInteraction": 4,
+        "infrastructureSystems": 1,
+        "securityFocus": 1,
+        "dataAiFocus": 5,
+        "hardwareInteraction": 0,
+        "debuggingTesting": 3,
+        "collaborationCommunication": 5
+      },
+      "roadmap": ["SQL", "Data Structures & Algorithms"]
+    }
+  ]
+}

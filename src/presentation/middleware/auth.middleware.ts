@@ -73,6 +73,27 @@ function requireRole(role: Role) {
     }
 }
 
+// requireEmailVerified checks the database to confirm the authenticated
+// user has verified their email. Must be placed after authenticate.
+async function requireEmailVerified(req: Request, res: Response, next: NextFunction) {
+    if (!req.user) {
+        res.status(401).json({ error: "Unauthorized" })
+        return
+    }
 
+    // Lazy import to avoid circular dependency at module load time
+    const { prisma } = await import("../../infrastructure/prisma")
 
-export { authenticate, requireRole }
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.userId }
+    })
+
+    if (!user || !user.isEmailVerified) {
+        res.status(403).json({ error: "Email verification required" })
+        return
+    }
+
+    next()
+}
+
+export { authenticate, requireRole, requireEmailVerified }

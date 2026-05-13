@@ -1,0 +1,257 @@
+{
+  "tags": [
+    "Coding Intensity",
+    "Math Level",
+    "Creativity",
+    "System Design",
+    "User Interaction",
+    "Infrastructure/Systems",
+    "Security Focus",
+    "Data/AI Focus",
+    "Hardware Interaction",
+    "Debugging/Testing",
+    "Collaboration/Communication"
+  ],
+  "questions": [
+    {
+      "question": "You are given a free afternoon to work on something interesting. What sounds most satisfying?",
+      "options": [
+        { "text": "Making something look unique, fun, or more appealing", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "User Interaction", "weight": 2 }] },
+        { "text": "Organizing how everything should fit together before starting", "tags": [{ "name": "System Design", "weight": 5 }, { "name": "Debugging/Testing", "weight": 1 }] },
+        { "text": "Figuring out how a machine, device, or setup works behind the scenes", "tags": [{ "name": "Infrastructure/Systems", "weight": 4 }, { "name": "Hardware Interaction", "weight": 3 }] },
+        { "text": "Looking for patterns, rules, or clues to understand what is really going on", "tags": [{ "name": "Data/AI Focus", "weight": 4 }, { "name": "Math Level", "weight": 2 }, { "name": "Debugging/Testing", "weight": 2 }] }
+      ]
+    },
+    {
+      "question": "When something in daily life goes wrong, what do you usually do first?",
+      "options": [
+        { "text": "Try different fixes until you find what works", "tags": [{ "name": "Debugging/Testing", "weight": 5 }, { "name": "Coding Intensity", "weight": 2 }] },
+        { "text": "Step back and think about the whole situation before acting", "tags": [{ "name": "System Design", "weight": 4 }, { "name": "Collaboration/Communication", "weight": 1 }] },
+        { "text": "Ask people questions and gather different opinions", "tags": [{ "name": "Collaboration/Communication", "weight": 4 }, { "name": "User Interaction", "weight": 3 }] },
+        { "text": "Notice tiny details that others may have missed", "tags": [{ "name": "Security Focus", "weight": 3 }, { "name": "Debugging/Testing", "weight": 3 }, { "name": "Data/AI Focus", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "Which kind of school or personal project would you enjoy most?",
+      "options": [
+        { "text": "Designing the style, message, or experience people will notice first", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "User Interaction", "weight": 3 }] },
+        { "text": "Planning the steps so everything runs smoothly from start to finish", "tags": [{ "name": "System Design", "weight": 4 }, { "name": "Collaboration/Communication", "weight": 2 }] },
+        { "text": "Collecting information and discovering useful insights from it", "tags": [{ "name": "Data/AI Focus", "weight": 5 }, { "name": "Math Level", "weight": 2 }] },
+        { "text": "Building, connecting, or adjusting real objects or equipment", "tags": [{ "name": "Hardware Interaction", "weight": 5 }, { "name": "Infrastructure/Systems", "weight": 2 }] }
+      ]
+    },
+    {
+      "question": "In a group activity, which role feels most natural to you?",
+      "options": [
+        { "text": "The person who keeps everyone connected and understood", "tags": [{ "name": "Collaboration/Communication", "weight": 5 }, { "name": "User Interaction", "weight": 3 }] },
+        { "text": "The person who makes the plan and keeps things organized", "tags": [{ "name": "System Design", "weight": 4 }, { "name": "Collaboration/Communication", "weight": 2 }] },
+        { "text": "The person who checks for mistakes and improves weak spots", "tags": [{ "name": "Debugging/Testing", "weight": 5 }, { "name": "Security Focus", "weight": 2 }] },
+        { "text": "The person who brings fresh ideas and a different style", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "User Interaction", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "Imagine you are setting up a new room. What matters most to you?",
+      "options": [
+        { "text": "That it feels welcoming and easy for people to use", "tags": [{ "name": "User Interaction", "weight": 5 }, { "name": "Creativity", "weight": 2 }] },
+        { "text": "That everything has a clear place and purpose", "tags": [{ "name": "System Design", "weight": 4 }, { "name": "Infrastructure/Systems", "weight": 2 }] },
+        { "text": "That devices, connections, or moving parts work reliably", "tags": [{ "name": "Infrastructure/Systems", "weight": 4 }, { "name": "Hardware Interaction", "weight": 3 }] },
+        { "text": "That nothing important is left exposed or easy to misuse", "tags": [{ "name": "Security Focus", "weight": 5 }, { "name": "Debugging/Testing", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "Which type of puzzle sounds most fun?",
+      "options": [
+        { "text": "A logic puzzle with clues and hidden patterns", "tags": [{ "name": "Math Level", "weight": 3 }, { "name": "Data/AI Focus", "weight": 3 }, { "name": "Debugging/Testing", "weight": 2 }] },
+        { "text": "A puzzle where you must arrange pieces into the best structure", "tags": [{ "name": "System Design", "weight": 5 }, { "name": "Coding Intensity", "weight": 1 }] },
+        { "text": "A puzzle where you improve something until it works better", "tags": [{ "name": "Debugging/Testing", "weight": 4 }, { "name": "Infrastructure/Systems", "weight": 2 }] },
+        { "text": "A puzzle where you imagine new possibilities and creative solutions", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "System Design", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "When you learn something new, what usually helps you most?",
+      "options": [
+        { "text": "Seeing a clear step-by-step path", "tags": [{ "name": "Coding Intensity", "weight": 3 }, { "name": "Debugging/Testing", "weight": 2 }] },
+        { "text": "Understanding the big picture first", "tags": [{ "name": "System Design", "weight": 5 }, { "name": "Data/AI Focus", "weight": 1 }] },
+        { "text": "Talking it through with someone or asking questions", "tags": [{ "name": "Collaboration/Communication", "weight": 4 }, { "name": "User Interaction", "weight": 2 }] },
+        { "text": "Trying it yourself and noticing what happens", "tags": [{ "name": "Hardware Interaction", "weight": 3 }, { "name": "Debugging/Testing", "weight": 3 }, { "name": "Infrastructure/Systems", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "You notice a system at school, home, or work is confusing. What bothers you most?",
+      "options": [
+        { "text": "People may struggle to use it or feel frustrated", "tags": [{ "name": "User Interaction", "weight": 5 }, { "name": "Collaboration/Communication", "weight": 2 }] },
+        { "text": "It was not planned clearly from the beginning", "tags": [{ "name": "System Design", "weight": 5 }, { "name": "Debugging/Testing", "weight": 1 }] },
+        { "text": "It might fail, break, or slow people down", "tags": [{ "name": "Infrastructure/Systems", "weight": 4 }, { "name": "Debugging/Testing", "weight": 2 }] },
+        { "text": "Important information may be handled carelessly", "tags": [{ "name": "Security Focus", "weight": 5 }, { "name": "Data/AI Focus", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "Which activity sounds the most satisfying?",
+      "options": [
+        { "text": "Turning a messy idea into something clear and structured", "tags": [{ "name": "System Design", "weight": 4 }, { "name": "Collaboration/Communication", "weight": 1 }, { "name": "Coding Intensity", "weight": 1 }] },
+        { "text": "Spotting errors that others missed and fixing them", "tags": [{ "name": "Debugging/Testing", "weight": 5 }, { "name": "Security Focus", "weight": 1 }] },
+        { "text": "Creating something original that people enjoy seeing or using", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "User Interaction", "weight": 3 }] },
+        { "text": "Comparing details to discover patterns or useful answers", "tags": [{ "name": "Data/AI Focus", "weight": 5 }, { "name": "Math Level", "weight": 2 }] }
+      ]
+    },
+    {
+      "question": "If you had to choose one type of responsibility, which would you prefer?",
+      "options": [
+        { "text": "Making sure people have a smooth and enjoyable experience", "tags": [{ "name": "User Interaction", "weight": 5 }, { "name": "Collaboration/Communication", "weight": 2 }] },
+        { "text": "Making sure the structure behind everything is strong", "tags": [{ "name": "Infrastructure/Systems", "weight": 4 }, { "name": "System Design", "weight": 2 }] },
+        { "text": "Making sure problems are found before they get worse", "tags": [{ "name": "Debugging/Testing", "weight": 4 }, { "name": "Security Focus", "weight": 3 }] },
+        { "text": "Making sure ideas are imaginative and stand out", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "User Interaction", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "What kind of thinking feels most natural to you?",
+      "options": [
+        { "text": "How can this be simpler and clearer?", "tags": [{ "name": "User Interaction", "weight": 4 }, { "name": "System Design", "weight": 2 }] },
+        { "text": "How can this be more reliable and better organized?", "tags": [{ "name": "Infrastructure/Systems", "weight": 3 }, { "name": "System Design", "weight": 3 }] },
+        { "text": "What is the hidden reason behind this result?", "tags": [{ "name": "Data/AI Focus", "weight": 4 }, { "name": "Math Level", "weight": 2 }, { "name": "Debugging/Testing", "weight": 1 }] },
+        { "text": "What could go wrong here that others may not notice?", "tags": [{ "name": "Security Focus", "weight": 5 }, { "name": "Debugging/Testing", "weight": 2 }] }
+      ]
+    },
+    {
+      "question": "You are helping with an event. Which task would you choose first?",
+      "options": [
+        { "text": "Welcoming people and making sure they feel comfortable", "tags": [{ "name": "User Interaction", "weight": 4 }, { "name": "Collaboration/Communication", "weight": 4 }] },
+        { "text": "Creating the layout, flow, or visual style", "tags": [{ "name": "Creativity", "weight": 5 }, { "name": "System Design", "weight": 1 }] },
+        { "text": "Managing the setup so everything runs properly in the background", "tags": [{ "name": "Infrastructure/Systems", "weight": 5 }, { "name": "Hardware Interaction", "weight": 2 }] },
+        { "text": "Checking details, timing, and anything that might fail", "tags": [{ "name": "Debugging/Testing", "weight": 4 }, { "name": "System Design", "weight": 2 }, { "name": "Security Focus", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "Which compliment would feel the most meaningful to you?",
+      "options": [
+        { "text": "You made this easy to understand and use.", "tags": [{ "name": "User Interaction", "weight": 5 }, { "name": "Collaboration/Communication", "weight": 2 }] },
+        { "text": "You always come up with fresh and creative ideas.", "tags": [{ "name": "Creativity", "weight": 5 }] },
+        { "text": "You notice problems before anyone else does.", "tags": [{ "name": "Security Focus", "weight": 3 }, { "name": "Debugging/Testing", "weight": 4 }] },
+        { "text": "You are great at making complex things fit together.", "tags": [{ "name": "System Design", "weight": 5 }, { "name": "Infrastructure/Systems", "weight": 2 }] }
+      ]
+    },
+    {
+      "question": "Which situation sounds most interesting to explore?",
+      "options": [
+        { "text": "Why people choose one option over another", "tags": [{ "name": "User Interaction", "weight": 4 }, { "name": "Data/AI Focus", "weight": 2 }, { "name": "Collaboration/Communication", "weight": 1 }] },
+        { "text": "How a process can be made faster and smoother", "tags": [{ "name": "System Design", "weight": 4 }, { "name": "Infrastructure/Systems", "weight": 2 }, { "name": "Coding Intensity", "weight": 1 }] },
+        { "text": "How numbers, trends, or repeated behaviors tell a story", "tags": [{ "name": "Data/AI Focus", "weight": 5 }, { "name": "Math Level", "weight": 3 }] },
+        { "text": "How a device, tool, or connected setup actually works", "tags": [{ "name": "Hardware Interaction", "weight": 4 }, { "name": "Infrastructure/Systems", "weight": 3 }] }
+      ]
+    },
+    {
+      "question": "If you were known for one strength, which would you want it to be?",
+      "options": [
+        { "text": "Turning ideas into something people enjoy and connect with", "tags": [{ "name": "Creativity", "weight": 4 }, { "name": "User Interaction", "weight": 4 }] },
+        { "text": "Solving tricky problems patiently and carefully", "tags": [{ "name": "Debugging/Testing", "weight": 5 }, { "name": "Coding Intensity", "weight": 2 }] },
+        { "text": "Protecting important things and thinking ahead about risks", "tags": [{ "name": "Security Focus", "weight": 5 }, { "name": "System Design", "weight": 1 }] },
+        { "text": "Understanding systems, patterns, and how everything connects", "tags": [{ "name": "System Design", "weight": 3 }, { "name": "Data/AI Focus", "weight": 3 }, { "name": "Infrastructure/Systems", "weight": 2 }] }
+      ]
+    },
+    {
+      "question": "The \"Lego\" Test: When building a set, do you follow the manual or build your own creation?",
+      "options": [
+        { "text": "Follow the manual", "tags": [{ "name": "Infrastructure/Systems", "weight": 1 }] },
+        { "text": "Build my own creation", "tags": [{ "name": "Creativity", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "The Problem Solver: Do you prefer fixing something broken or building something new?",
+      "options": [
+        { "text": "Fixing something broken", "tags": [{ "name": "Debugging/Testing", "weight": 1 }] },
+        { "text": "Building something new", "tags": [{ "name": "Coding Intensity", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "The Visual Eye: Do you notice when a website's buttons are slightly off-center?",
+      "options": [
+        { "text": "Yes, it bothers me", "tags": [{ "name": "User Interaction", "weight": 1 }, { "name": "Creativity", "weight": 1 }] },
+        { "text": "No, I rarely notice", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Data Mind: Do you enjoy looking for patterns in spreadsheets or sports stats?",
+      "options": [
+        { "text": "Yes, I love finding patterns", "tags": [{ "name": "Data/AI Focus", "weight": 1 }, { "name": "Math Level", "weight": 1 }] },
+        { "text": "No, not my thing", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Guardian: Does the idea of \"locking down\" a system and finding loopholes excite you?",
+      "options": [
+        { "text": "Yes, absolutely", "tags": [{ "name": "Security Focus", "weight": 1 }] },
+        { "text": "No, not really", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Translator: Do you enjoy explaining complex ideas to people who don't get them?",
+      "options": [
+        { "text": "Yes, I enjoy it", "tags": [{ "name": "Collaboration/Communication", "weight": 1 }, { "name": "User Interaction", "weight": 1 }] },
+        { "text": "No, I prefer just doing the work", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Architect: Do you prefer drawing the blueprint or actually swinging the hammer?",
+      "options": [
+        { "text": "Drawing the blueprint", "tags": [{ "name": "System Design", "weight": 1 }] },
+        { "text": "Swinging the hammer", "tags": [{ "name": "Coding Intensity", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "The Automation Bug: Do you get annoyed by repetitive tasks and try to find a shortcut?",
+      "options": [
+        { "text": "Yes, I automate everything I can", "tags": [{ "name": "Infrastructure/Systems", "weight": 1 }, { "name": "Coding Intensity", "weight": 1 }] },
+        { "text": "No, I don't mind repetitive tasks", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Device Preference: Are you more interested in how an app looks on a phone or how it works?",
+      "options": [
+        { "text": "How it looks on a phone", "tags": [{ "name": "User Interaction", "weight": 1 }] },
+        { "text": "How it works behind the scenes", "tags": [{ "name": "Infrastructure/Systems", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "The Logic Puzzle: Do you enjoy math or logic games (Sudoku, Chess)?",
+      "options": [
+        { "text": "Yes, I love them", "tags": [{ "name": "Math Level", "weight": 1 }, { "name": "Data/AI Focus", "weight": 1 }] },
+        { "text": "No, I prefer other games", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Speed Demon: Do you care more about how fast a game runs or how pretty it looks?",
+      "options": [
+        { "text": "How fast it runs", "tags": [{ "name": "Hardware Interaction", "weight": 1 }] },
+        { "text": "How pretty it looks", "tags": [{ "name": "Creativity", "weight": 1 }] }
+      ]
+    },
+    {
+      "question": "The Skeptic: When you see a \"New Feature,\" is your first thought \"How can I break this?\"",
+      "options": [
+        { "text": "Yes, exactly", "tags": [{ "name": "Debugging/Testing", "weight": 1 }, { "name": "Security Focus", "weight": 1 }] },
+        { "text": "No, I just want to use it", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Organizer: Do you enjoy setting up the folders and \"plumbing\" of a project?",
+      "options": [
+        { "text": "Yes, I like organizing the foundation", "tags": [{ "name": "Infrastructure/Systems", "weight": 1 }, { "name": "Data/AI Focus", "weight": 1 }] },
+        { "text": "No, I want to jump straight into it", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Storyteller: Do you like using data to prove a point or tell a story?",
+      "options": [
+        { "text": "Yes, very much", "tags": [{ "name": "Data/AI Focus", "weight": 1 }, { "name": "Collaboration/Communication", "weight": 1 }] },
+        { "text": "No, data is just numbers to me", "tags": [] }
+      ]
+    },
+    {
+      "question": "The Deep Diver: Would you rather know a little about everything or be a master of one specific tool?",
+      "options": [
+        { "text": "Know a little about everything", "tags": [{ "name": "System Design", "weight": 1 }] },
+        { "text": "Master of one specific tool", "tags": [{ "name": "Infrastructure/Systems", "weight": 1 }] }
+      ]
+    }
+  ]
+}
