@@ -1,4 +1,5 @@
 import express from 'express'; // imports the express library
+import cors from 'cors';
 import { router as authRouter } from "./presentation/routes/auth.routes"
 import { router as studentRouter } from './presentation/routes/student.routes';
 import { router as providerRouter } from './presentation/routes/provider.routes';
@@ -10,6 +11,7 @@ import { router as adminRouter } from './presentation/routes/admin.routes';
 const app = express();
 
 // registers a middleware
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 
 // every route inside auth.routes.ts gets prefixed with /auth
