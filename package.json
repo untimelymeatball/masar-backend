@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node --files src/server.ts",
-    "seed": "ts-node --project tsconfig.seed.json --files prisma/seed.ts"
+    "seed": "ts-node --project tsconfig.seed.json --files prisma/seed.ts",
+    "qa:student": "ts-node --files src/scripts/qa-test.ts"
   },
   "keywords": [],
   "author": "",

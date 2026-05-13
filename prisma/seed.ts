@@ -104,6 +104,7 @@ async function main() {
       title: "Career Discovery Assessment",
       description:
         "Discover which tech career path best matches your natural strengths, interests, and thinking style.",
+      isActive: true,
     },
   });
   console.log(`   ✅ Assessment created: "${assessment.title}" (${assessment.id})\n`);
@@ -287,6 +288,43 @@ async function main() {
   }
   console.log(`   ✅ ${objectives.length} onboarding objectives seeded\n`);
 
+  // ── 8. Generate Default Roadmap Tasks ─────────────────────────────────
+  console.log("8/8 Seeding roadmap tasks...");
+
+  // Clear existing tasks for idempotency (delete progress first due to FK)
+  await prisma.userRoadmapTaskProgress.deleteMany({});
+  await prisma.userRoadmapItemProgress.deleteMany({});
+  await prisma.roadmapTask.deleteMany({});
+
+  // Fetch all roadmap items with their topic names
+  const allRoadmapItems = await prisma.careerRoadmapItem.findMany({
+    include: { topic: true },
+    orderBy: [{ careerId: "asc" }, { order: "asc" }]
+  });
+
+  let taskCount = 0;
+  for (const item of allRoadmapItems) {
+    const topicName = item.topic.name;
+
+    const defaultTasks = [
+      { title: `Complete learning material for ${topicName}`, order: 1 },
+      { title: `Complete practice exercise for ${topicName}`, order: 2 },
+      { title: `Mark ${topicName} as understood`, order: 3 }
+    ];
+
+    for (const task of defaultTasks) {
+      await prisma.roadmapTask.create({
+        data: {
+          roadmapItemId: item.id,
+          title: task.title,
+          order: task.order
+        }
+      });
+      taskCount++;
+    }
+  }
+  console.log(`   ✅ ${taskCount} roadmap tasks seeded (${allRoadmapItems.length} items × 3 tasks)\n`);
+
   // ── Summary ────────────────────────────────────────────────────────────
   console.log("═══════════════════════════════════════════");
   console.log("🎉 Seed completed successfully!");
@@ -299,6 +337,7 @@ async function main() {
   console.log(`   Topics:        ${allTopicNames.size}`);
   console.log(`   Roadmap Links: ${roadmapItemCount}`);
   console.log(`   Objectives:    ${objectives.length}`);
+  console.log(`   Tasks:         ${taskCount}`);
   console.log("═══════════════════════════════════════════");
 }
 

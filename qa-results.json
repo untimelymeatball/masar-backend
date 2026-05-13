@@ -1,0 +1,236 @@
+{
+  "date": "2026-05-12T00:02:46.767Z",
+  "results": [
+    {
+      "test": "Login as student1",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Login as provider1",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Unauth GET /me → 401",
+      "status": "PASS",
+      "note": "got 401"
+    },
+    {
+      "test": "Provider GET /me → 403",
+      "status": "PASS",
+      "note": "got 403"
+    },
+    {
+      "test": "GET /me (dashboard profile)",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "PATCH enrichment",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Profile completion XP awarded",
+      "status": "PASS",
+      "note": "20 XP"
+    },
+    {
+      "test": "No duplicate profile XP",
+      "status": "PASS",
+      "note": "count: 1"
+    },
+    {
+      "test": "GET active assessment",
+      "status": "PASS",
+      "note": "id=b269e35a-6d3f-464e-a077-e9c10c454dba, questions=30"
+    },
+    {
+      "test": "GET assessment/start",
+      "status": "FAIL",
+      "note": "status 409"
+    },
+    {
+      "test": "GET career recommendations",
+      "status": "PASS",
+      "note": "5 careers"
+    },
+    {
+      "test": "Select 2 roadmaps (by ID)",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Select 4 roadmaps blocked",
+      "status": "PASS",
+      "note": "got 400"
+    },
+    {
+      "test": "Duplicate slugs blocked",
+      "status": "PASS",
+      "note": "got 400"
+    },
+    {
+      "test": "Select 2 roadmaps (by slug)",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "GET roadmaps (slug format)",
+      "status": "PASS",
+      "note": "2 roadmaps"
+    },
+    {
+      "test": "GET opportunities",
+      "status": "PASS",
+      "note": "4 found"
+    },
+    {
+      "test": "Draft not visible",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "GET opportunity detail",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Mark interest",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Duplicate interest (idempotent)",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Future participation blocked",
+      "status": "PASS",
+      "note": "got 400: Opportunity has not passed yet"
+    },
+    {
+      "test": "Confirm past participation",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Submit feedback",
+      "status": "PASS",
+      "note": "status 200"
+    },
+    {
+      "test": "Duplicate feedback blocked",
+      "status": "PASS",
+      "note": "got 400"
+    },
+    {
+      "test": "GET practical hours",
+      "status": "PASS",
+      "note": "totalHours=80"
+    },
+    {
+      "test": "GET practical hours summary",
+      "status": "PASS",
+      "note": "level=5"
+    },
+    {
+      "test": "GET gamification",
+      "status": "PASS",
+      "note": "xp=undefined, level=undefined"
+    },
+    {
+      "test": "GET XP events",
+      "status": "PASS",
+      "note": "count=8"
+    },
+    {
+      "test": "No duplicate XP events",
+      "status": "PASS",
+      "note": "8 unique events"
+    },
+    {
+      "test": "GET badges",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "GET dashboard",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Dashboard has profile",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Dashboard has gamification",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Dashboard has roadmaps",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Dashboard has practicalHours",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Dashboard has recentActivity",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "GET recent-activity",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Recent activity limit=3",
+      "status": "PASS",
+      "note": "returned=3 items"
+    },
+    {
+      "test": "GET provider profile",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "No sensitive provider fields",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "test": "Submit provider report",
+      "status": "PASS",
+      "note": "status 201"
+    },
+    {
+      "test": "Duplicate report blocked",
+      "status": "PASS",
+      "note": "got 400"
+    },
+    {
+      "test": "Report wrong opportunityId blocked",
+      "status": "PASS",
+      "note": "got 400"
+    },
+    {
+      "test": "GET student reports",
+      "status": "PASS",
+      "note": "count=1"
+    }
+  ],
+  "summary": {
+    "passed": 44,
+    "failed": 1,
+    "blocked": 0,
+    "total": 45
+  }
+}

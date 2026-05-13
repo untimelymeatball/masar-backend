@@ -17,15 +17,18 @@ interface TagScores {
 interface CareerMatchResult {
   careerId: string;
   careerName: string;
+  slug: string;
   matchPercentage: number;
   reasons: string[];
-  roadmap: string[];
+  roadmapPreview: string[];
 }
 
 /** The full response returned from submitAssessment */
 interface AssessmentResult {
+  resultId: string;
   profile: TagScores;
   topCareers: CareerMatchResult[];
+  submittedAt: Date;
 }
 
 // ─── 1. calculateRawTagScores ───────────────────────────────────────────────
@@ -303,14 +306,15 @@ async function submitAssessment(
 
     const matchPercentage = calculateCareerMatch(normalizedScores, traitData);
     const reasons = generateCareerReasons(normalizedScores, traitData);
-    const roadmap = career.roadmapItems.map((item) => item.topic.name);
+    const roadmapPreview = career.roadmapItems.map((item) => item.topic.name);
 
     return {
       careerId: career.id,
       careerName: career.name,
+      slug: career.slug,
       matchPercentage,
       reasons,
-      roadmap,
+      roadmapPreview,
     };
   });
 
@@ -320,10 +324,11 @@ async function submitAssessment(
 
   // ── Save Result ────────────────────────────────────────────────────────
 
-  await prisma.userAssessmentResult.create({
+  const savedResult = await prisma.userAssessmentResult.create({
     data: {
       userId: userId,
       assessmentId,
+      submittedAnswers: answers as any,
       rawScores: rawScores as any,
       normalizedScores: normalizedScores as any,
       careerMatches: topCareers as any,
@@ -333,8 +338,10 @@ async function submitAssessment(
   // ── Return ─────────────────────────────────────────────────────────────
 
   return {
+    resultId: savedResult.id,
     profile: normalizedScores,
     topCareers,
+    submittedAt: savedResult.createdAt,
   };
 }
 

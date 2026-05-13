@@ -1,0 +1,1085 @@
+{
+  "version": 1,
+  "source": "Masar badge rules - backend source of truth",
+  "description": "Backend-only badge/trophy rules. The backend evaluates these conditions and stores earned badge IDs in StudentBadge.",
+  "badges": [
+    {
+      "id": "academic_link",
+      "kind": "badge",
+      "category": "onboarding",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "affiliation_code_used"
+      }
+    },
+    {
+      "id": "assessment_finisher",
+      "kind": "badge",
+      "category": "assessment",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "assessment_completed"
+      }
+    },
+    {
+      "id": "career_ai_data_scientist_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "ai-data-scientist"
+      }
+    },
+    {
+      "id": "career_ai_engineer_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "ai-engineer"
+      }
+    },
+    {
+      "id": "career_android_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "android"
+      }
+    },
+    {
+      "id": "career_backend_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "backend"
+      }
+    },
+    {
+      "id": "career_bi_analyst_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "bi-analyst"
+      }
+    },
+    {
+      "id": "career_blockchain_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "blockchain"
+      }
+    },
+    {
+      "id": "career_cyber_security_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "cyber-security"
+      }
+    },
+    {
+      "id": "career_data_analyst_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "data-analyst"
+      }
+    },
+    {
+      "id": "career_data_engineer_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "data-engineer"
+      }
+    },
+    {
+      "id": "career_developer_relations_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "developer-relations"
+      }
+    },
+    {
+      "id": "career_devops_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "devops"
+      }
+    },
+    {
+      "id": "career_devsecops_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "devsecops"
+      }
+    },
+    {
+      "id": "career_frontend_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "frontend"
+      }
+    },
+    {
+      "id": "career_full_stack_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "full-stack"
+      }
+    },
+    {
+      "id": "career_game_developer_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "game-developer"
+      }
+    },
+    {
+      "id": "career_ios_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "ios"
+      }
+    },
+    {
+      "id": "career_machine_learning_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "machine-learning"
+      }
+    },
+    {
+      "id": "career_matches_unlocked",
+      "kind": "trophy",
+      "category": "assessment",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "career_recommendations_generated",
+        "operator": ">=",
+        "value": 1
+      }
+    },
+    {
+      "id": "career_mlops_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "mlops"
+      }
+    },
+    {
+      "id": "career_postgresql_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "postgresql"
+      }
+    },
+    {
+      "id": "career_product_manager_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "product-manager"
+      }
+    },
+    {
+      "id": "career_qa_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "qa"
+      }
+    },
+    {
+      "id": "career_server_side_game_developer_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "server-side-game-developer"
+      }
+    },
+    {
+      "id": "career_software_architect_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "software-architect"
+      }
+    },
+    {
+      "id": "career_ux_design_completed",
+      "kind": "trophy",
+      "category": "career_completion",
+      "rarity": "rare",
+      "condition": {
+        "type": "career_roadmap_completed",
+        "careerSlug": "ux-design"
+      }
+    },
+    {
+      "id": "career_veteran",
+      "kind": "trophy",
+      "category": "practical_hours",
+      "rarity": "legendary",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 500
+      }
+    },
+    {
+      "id": "double_path_achiever",
+      "kind": "trophy",
+      "category": "roadmap_progress",
+      "rarity": "rare",
+      "condition": {
+        "type": "completed_roadmaps_count",
+        "operator": ">=",
+        "value": 2
+      }
+    },
+    {
+      "id": "experience_champion",
+      "kind": "trophy",
+      "category": "practical_hours",
+      "rarity": "epic",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 250
+      }
+    },
+    {
+      "id": "first_step",
+      "kind": "badge",
+      "category": "onboarding",
+      "rarity": "common",
+      "condition": {
+        "type": "account_created"
+      }
+    },
+    {
+      "id": "five_path_champion",
+      "kind": "trophy",
+      "category": "roadmap_progress",
+      "rarity": "epic",
+      "condition": {
+        "type": "completed_roadmaps_count",
+        "operator": ">=",
+        "value": 5
+      }
+    },
+    {
+      "id": "goal_setter",
+      "kind": "badge",
+      "category": "onboarding",
+      "rarity": "common",
+      "condition": {
+        "type": "student_goals_selected",
+        "operator": ">=",
+        "value": 1
+      }
+    },
+    {
+      "id": "identity_complete",
+      "kind": "badge",
+      "category": "onboarding",
+      "rarity": "common",
+      "condition": {
+        "type": "profile_fields_completed",
+        "requiredFields": ["profilePictureUrl", "bio"]
+      }
+    },
+    {
+      "id": "industry_ready_1",
+      "kind": "badge",
+      "category": "practical_hours",
+      "rarity": "rare",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 50
+      }
+    },
+    {
+      "id": "industry_ready_2",
+      "kind": "trophy",
+      "category": "practical_hours",
+      "rarity": "epic",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "roadmap_100_percent",
+      "kind": "badge",
+      "category": "roadmap_progress",
+      "rarity": "rare",
+      "condition": {
+        "type": "any_active_roadmap_progress_percentage",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "roadmap_25_percent",
+      "kind": "badge",
+      "category": "roadmap_progress",
+      "rarity": "common",
+      "condition": {
+        "type": "any_active_roadmap_progress_percentage",
+        "operator": ">=",
+        "value": 25
+      }
+    },
+    {
+      "id": "roadmap_50_percent",
+      "kind": "badge",
+      "category": "roadmap_progress",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "any_active_roadmap_progress_percentage",
+        "operator": ">=",
+        "value": 50
+      }
+    },
+    {
+      "id": "roadmap_75_percent",
+      "kind": "badge",
+      "category": "roadmap_progress",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "any_active_roadmap_progress_percentage",
+        "operator": ">=",
+        "value": 75
+      }
+    },
+    {
+      "id": "roadmap_finisher",
+      "kind": "trophy",
+      "category": "roadmap_progress",
+      "rarity": "rare",
+      "condition": {
+        "type": "completed_roadmaps_count",
+        "operator": ">=",
+        "value": 1
+      }
+    },
+    {
+      "id": "rookie_explorer",
+      "kind": "badge",
+      "category": "practical_hours",
+      "rarity": "common",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 10
+      }
+    },
+    {
+      "id": "skill_ai_agents_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "AI Agents"
+      }
+    },
+    {
+      "id": "skill_ai_red_teaming_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "AI Red Teaming"
+      }
+    },
+    {
+      "id": "skill_angular_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Angular"
+      }
+    },
+    {
+      "id": "skill_api_design_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "API Design"
+      }
+    },
+    {
+      "id": "skill_asp_net_core_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "ASP.NET Core"
+      }
+    },
+    {
+      "id": "skill_aws_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "AWS"
+      }
+    },
+    {
+      "id": "skill_builder",
+      "kind": "badge",
+      "category": "practical_hours",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 25
+      }
+    },
+    {
+      "id": "skill_c_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "C++"
+      }
+    },
+    {
+      "id": "skill_cloudflare_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Cloudflare"
+      }
+    },
+    {
+      "id": "skill_code_review_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Code Review"
+      }
+    },
+    {
+      "id": "skill_css_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "CSS"
+      }
+    },
+    {
+      "id": "skill_data_structures_and_algorithms_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Data Structures & Algorithms"
+      }
+    },
+    {
+      "id": "skill_design_and_architecture_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Design and Architecture"
+      }
+    },
+    {
+      "id": "skill_design_system_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Design System"
+      }
+    },
+    {
+      "id": "skill_django_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Django"
+      }
+    },
+    {
+      "id": "skill_docker_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Docker"
+      }
+    },
+    {
+      "id": "skill_elasticsearch_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Elasticsearch"
+      }
+    },
+    {
+      "id": "skill_git_and_github_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Git and GitHub"
+      }
+    },
+    {
+      "id": "skill_graphql_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "GraphQL"
+      }
+    },
+    {
+      "id": "skill_html_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "HTML"
+      }
+    },
+    {
+      "id": "skill_java_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Java"
+      }
+    },
+    {
+      "id": "skill_javascript_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "JavaScript"
+      }
+    },
+    {
+      "id": "skill_kotlin_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Kotlin"
+      }
+    },
+    {
+      "id": "skill_kubernetes_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Kubernetes"
+      }
+    },
+    {
+      "id": "skill_laravel_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Laravel"
+      }
+    },
+    {
+      "id": "skill_linux_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Linux"
+      }
+    },
+    {
+      "id": "skill_machine_learning_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Machine Learning"
+      }
+    },
+    {
+      "id": "skill_mapper",
+      "kind": "badge",
+      "category": "assessment",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "assessment_added_profile_items",
+        "fields": ["skills", "hobbies", "talents"],
+        "operator": ">=",
+        "value": 1
+      }
+    },
+    {
+      "id": "skill_mongodb_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "MongoDB"
+      }
+    },
+    {
+      "id": "skill_next_js_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Next.js"
+      }
+    },
+    {
+      "id": "skill_node_js_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Node.js"
+      }
+    },
+    {
+      "id": "skill_php_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "PHP"
+      }
+    },
+    {
+      "id": "skill_postgresql_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "PostgreSQL"
+      }
+    },
+    {
+      "id": "skill_prompt_engineering_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Prompt Engineering"
+      }
+    },
+    {
+      "id": "skill_python_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Python"
+      }
+    },
+    {
+      "id": "skill_react_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "React"
+      }
+    },
+    {
+      "id": "skill_redis_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Redis"
+      }
+    },
+    {
+      "id": "skill_ruby_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Ruby"
+      }
+    },
+    {
+      "id": "skill_ruby_on_rails_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Ruby on Rails"
+      }
+    },
+    {
+      "id": "skill_shell_bash_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Shell / Bash"
+      }
+    },
+    {
+      "id": "skill_spring_boot_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Spring Boot"
+      }
+    },
+    {
+      "id": "skill_sql_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "SQL"
+      }
+    },
+    {
+      "id": "skill_swift_and_swift_ui_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Swift & Swift UI"
+      }
+    },
+    {
+      "id": "skill_system_design_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "System Design"
+      }
+    },
+    {
+      "id": "skill_terraform_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Terraform"
+      }
+    },
+    {
+      "id": "skill_typescript_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "TypeScript"
+      }
+    },
+    {
+      "id": "skill_vue_completed",
+      "kind": "badge",
+      "category": "skill_completion",
+      "rarity": "uncommon",
+      "condition": {
+        "type": "skill_completed",
+        "skillName": "Vue"
+      }
+    },
+    {
+      "id": "spark",
+      "kind": "badge",
+      "category": "practical_hours",
+      "rarity": "common",
+      "condition": {
+        "type": "verified_practical_hours",
+        "operator": ">=",
+        "value": 1
+      }
+    },
+    {
+      "id": "ten_path_legend",
+      "kind": "trophy",
+      "category": "roadmap_progress",
+      "rarity": "legendary",
+      "condition": {
+        "type": "completed_roadmaps_count",
+        "operator": ">=",
+        "value": 10
+      }
+    },
+    {
+      "id": "trait_codingintensity_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "codingIntensity",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_collaborationcommunication_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "collaborationCommunication",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_creativity_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "creativity",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_dataaifocus_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "dataAiFocus",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_debuggingtesting_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "debuggingTesting",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_hardwareinteraction_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "hardwareInteraction",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_infrastructuresystems_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "infrastructureSystems",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_mathlevel_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "mathLevel",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_securityfocus_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "securityFocus",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_systemdesign_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "systemDesign",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "trait_userinteraction_100",
+      "kind": "badge",
+      "category": "trait_mastery",
+      "rarity": "epic",
+      "condition": {
+        "type": "trait_points",
+        "trait": "userInteraction",
+        "operator": ">=",
+        "value": 100
+      }
+    },
+    {
+      "id": "triple_path_achiever",
+      "kind": "trophy",
+      "category": "roadmap_progress",
+      "rarity": "epic",
+      "condition": {
+        "type": "completed_roadmaps_count",
+        "operator": ">=",
+        "value": 3
+      }
+    },
+    {
+      "id": "verified_explorer",
+      "kind": "badge",
+      "category": "onboarding",
+      "rarity": "common",
+      "condition": {
+        "type": "email_verified"
+      }
+    }
+  ]
+}
