@@ -278,4 +278,53 @@ async function getStudentProfile(userId: string) {
         }
     }
 }
-export { registerStudent, verifyEmail, saveOnboardingObjectives, getStudentProfile }
+// ─── 5. getOnboardingObjectives ─────────────────────────────────────────────
+// Returns all available onboarding objectives for the registration form.
+// Public — called before email verification, so no auth required.
+async function getOnboardingObjectives() {
+    const objectives = await prisma.onboardingObjective.findMany({
+        select: { id: true, key: true, label: true },
+        orderBy: { label: "asc" }
+    })
+    return objectives
+}
+
+// ─── 6. linkAffiliation ─────────────────────────────────────────────────────
+// Sets StudentProfile.academicId by looking up an AcademicProfile via its
+// affiliationCode. Throws if the code doesn't match any academic.
+async function linkAffiliation(userId: string, affiliationCode: string) {
+    const studentProfile = await prisma.studentProfile.findUnique({
+        where: { userId }
+    })
+    if (!studentProfile)
+        throw new Error("Student profile not found")
+
+    const academicProfile = await prisma.academicProfile.findFirst({
+        where: { affiliationCode: { equals: affiliationCode.toLowerCase(), mode: "insensitive" } }
+    })
+    if (!academicProfile)
+        throw new Error("Invalid affiliation code")
+
+    await prisma.studentProfile.update({
+        where: { id: studentProfile.id },
+        data: { academicId: academicProfile.id }
+    })
+
+    return { message: "Affiliation linked successfully" }
+}
+
+// ─── 7. unlinkAffiliation ───────────────────────────────────────────────────
+async function unlinkAffiliation(userId: string) {
+    const studentProfile = await prisma.studentProfile.findUnique({ where: { userId } })
+    if (!studentProfile)
+        throw new Error("Student profile not found")
+
+    await prisma.studentProfile.update({
+        where: { id: studentProfile.id },
+        data: { academicId: null }
+    })
+
+    return { message: "Affiliation removed successfully" }
+}
+
+export { registerStudent, verifyEmail, saveOnboardingObjectives, getStudentProfile, getOnboardingObjectives, linkAffiliation, unlinkAffiliation }

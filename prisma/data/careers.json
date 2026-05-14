@@ -250,7 +250,7 @@
         "debuggingTesting": 4,
         "collaborationCommunication": 2
       },
-      "roadmap": []
+      "roadmap": ["JavaScript", "TypeScript", "Node.js", "Solidity", "Web3.js", "Smart Contracts", "Data Structures & Algorithms", "System Design"]
     },
     {
       "name": "QA",
@@ -394,7 +394,7 @@
         "debuggingTesting": 1,
         "collaborationCommunication": 5
       },
-      "roadmap": []
+      "roadmap": ["Product Strategy", "User Research", "Agile & Scrum", "Product Analytics", "Stakeholder Management", "Go-to-Market Planning"]
     },
     {
       "name": "Developer Relations",

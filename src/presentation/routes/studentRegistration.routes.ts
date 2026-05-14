@@ -11,6 +11,7 @@
 // GET    /me/assessment-results/latest    — latest assessment result (requires verified email)
 // GET    /me/career-recommendations/latest — enriched career recommendations (requires verified email)
 // POST   /me/selected-careers             — select 1–3 career paths (requires verified email)
+// POST   /me/selected-careers/add         — append one career post-completion (requires verified email)
 // GET    /me/selected-careers             — get selected career paths (requires verified email)
 // DELETE /me/selected-careers/:careerId   — remove one selected career (requires verified email)
 // GET    /me/roadmaps                     — full roadmap details for selected careers (requires verified email)
@@ -19,15 +20,25 @@
 // PATCH  /me/roadmaps/:careerId/items/:roadmapItemId/status — update item status (requires verified email)
 // PATCH  /me/roadmaps/:careerId/items/:roadmapItemId/tasks/:taskId — toggle task completion (requires verified email)
 // GET    /me/roadmaps/:careerId/progress  — roadmap progress analytics (requires verified email)
+// GET    /me/opportunities                — all published opportunities with student interaction status (requires verified email)
+// POST   /me/opportunities/:id/interest   — toggle interest on an opportunity (requires verified email)
+// POST   /me/opportunities/:id/participation — mark an opportunity as participated (requires verified email)
+// POST   /me/opportunities/:id/feedback   — submit feedback for a completed opportunity (requires verified email)
+// GET    /me/providers/:providerId         — get public provider profile with rating summary (requires verified email)
+// POST   /me/providers/:providerId/report  — submit a report against a provider (requires verified email)
 
 import { Router } from "express"
+import { prisma } from "../../infrastructure/prisma"
 import { authenticate, requireRole, requireEmailVerified } from "../middleware/auth.middleware"
 import { Role } from "../../generated/prisma/enums"
 import { validateRegistrationInput } from "../../application/student.validation"
 import {
     registerStudent,
     verifyEmail,
-    saveOnboardingObjectives
+    saveOnboardingObjectives,
+    getOnboardingObjectives,
+    linkAffiliation,
+    unlinkAffiliation
 } from "../../application/student.service"
 import {
     getStudentDashboard,
@@ -53,7 +64,8 @@ import {
     selectCareers,
     getSelectedCareers,
     removeSelectedCareer,
-    getSelectedRoadmaps
+    getSelectedRoadmaps,
+    addCareer
 } from "../../application/careerSelection.service"
 import {
     roadmapCareerIdParamSchema,
@@ -80,13 +92,51 @@ import {
     roadmapPointSlugParamSchema,
     updatePointCompletionSchema
 } from "../../application/roadmapProgress.validation"
-import { GamificationService } from "../../application/gamification.service"
-import { BadgeService } from "../../application/badge.service"
+import {
+    getStudentOpportunities,
+    toggleOpportunityInterest,
+    markOpportunityParticipation,
+    submitOpportunityFeedback
+} from "../../application/opportunity.service"
+import { StudentProviderService } from "../../application/studentProvider.service"
+import { reportProviderSchema } from "../../application/studentProvider.validation"
 
 const router = Router()
 
 // guard for routes that require a verified student
 const verifiedStudentGuard = [authenticate, requireRole(Role.STUDENT), requireEmailVerified]
+
+// ─── GET /check-username ─────────────────────────────────────────────────────
+// Checks whether a username is available. Public — called while typing in the
+// registration form before any account exists. Returns { available: boolean }.
+router.get("/check-username", async (req, res) => {
+    const username = (req.query.username as string) ?? ""
+    if (!username || username.length < 3) {
+        res.status(200).json({ available: false })
+        return
+    }
+    try {
+        const existing = await prisma.user.findUnique({
+            where: { username },
+            select: { id: true }
+        })
+        res.status(200).json({ available: !existing })
+    } catch {
+        res.status(200).json({ available: false })
+    }
+})
+
+// ─── GET /onboarding-objectives ─────────────────────────────────────────────
+// Returns available onboarding objectives for the registration form.
+// No authentication required — called before email verification.
+router.get("/onboarding-objectives", async (req, res) => {
+    try {
+        const objectives = await getOnboardingObjectives()
+        res.status(200).json({ success: true, data: objectives })
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: "Failed to fetch objectives" })
+    }
+})
 
 // ─── POST /register ─────────────────────────────────────────────────────────
 // Creates a new User (role=STUDENT) and StudentProfile in a single step.
@@ -275,6 +325,44 @@ router.patch("/profile-enrichment", ...verifiedStudentGuard, async (req, res) =>
     }
 })
 
+// ─── PATCH /me/affiliation ───────────────────────────────────────────────────
+// Links the authenticated student to an academic supervisor by affiliation code.
+// The code is generated by the academic and shared with the student out-of-band.
+router.patch("/me/affiliation", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const { affiliationCode } = req.body
+        if (!affiliationCode || typeof affiliationCode !== "string") {
+            res.status(400).json({ error: "affiliationCode is required" })
+            return
+        }
+        const result = await linkAffiliation(req.user!.userId, affiliationCode)
+        res.status(200).json(result)
+    } catch (error: any) {
+        if (error.message?.includes("Invalid affiliation code") || error.message?.includes("not found")) {
+            res.status(400).json({ error: error.message })
+        } else {
+            console.error("Link affiliation error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── DELETE /me/affiliation ──────────────────────────────────────────────────
+// Removes the student's link to their academic supervisor.
+router.delete("/me/affiliation", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const result = await unlinkAffiliation(req.user!.userId)
+        res.status(200).json(result)
+    } catch (error: any) {
+        if (error.message?.includes("not found")) {
+            res.status(404).json({ error: error.message })
+        } else {
+            console.error("Unlink affiliation error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
 // ─── GET /me/assessment-results ─────────────────────────────────────────────
 // Returns all past assessment results for the authenticated student.
 // Sorted newest first. Does not expose internal scoring data.
@@ -357,6 +445,32 @@ router.post("/me/selected-careers", ...verifiedStudentGuard, async (req, res) =>
             res.status(error.statusCode).json({ error: error.message })
         } else {
             console.error("Select careers error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── POST /me/selected-careers/add ──────────────────────────────────────────
+// Appends a single career from the "Explore more roadmaps" section without
+// replacing existing selections. Only valid for assessment-recommended careers.
+router.post("/me/selected-careers/add", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const paramValidation = validateRequest(careerIdParamSchema, req.body)
+        if (!paramValidation.success) {
+            res.status(400).json({ error: "Validation failed", details: paramValidation.errors })
+            return
+        }
+
+        const result = await addCareer(req.user!.userId, paramValidation.data.careerId)
+        res.status(200).json({
+            message: "Career path added successfully",
+            ...result
+        })
+    } catch (error: any) {
+        if (error instanceof ServiceError) {
+            res.status(error.statusCode).json({ error: error.message })
+        } else {
+            console.error("Add career error:", error)
             res.status(500).json({ error: "Internal server error" })
         }
     }
@@ -626,33 +740,154 @@ router.get("/me/roadmaps/:careerId/progress", ...verifiedStudentGuard, async (re
     }
 })
 
-// ─── GET /me/gamification ───────────────────────────────────────────────────
-// Retrieves the student's XP, level, verified hours, and recent XP events.
-router.get("/me/gamification", ...verifiedStudentGuard, async (req, res) => {
+
+// ─── GET /me/opportunities ───────────────────────────────────────────────────
+// Returns all published+approved opportunities with the student's current
+// interaction status (INTERESTED / PARTICIPATED / FEEDBACK_SUBMITTED / null).
+router.get("/me/opportunities", ...verifiedStudentGuard, async (req, res) => {
     try {
-        const gamification = await GamificationService.getStudentGamification(req.user!.userId)
-        res.status(200).json({
-            success: true,
-            data: gamification
-        })
+        const opportunities = await getStudentOpportunities(req.user!.userId)
+        res.status(200).json({ opportunities })
     } catch (error: any) {
-        console.error("Get gamification profile error:", error)
-        res.status(500).json({ success: false, message: "Internal server error" })
+        console.error("Get opportunities error:", error)
+        res.status(500).json({ error: "Internal server error" })
     }
 })
 
-// ─── GET /me/badges ─────────────────────────────────────────────────────────
-// Retrieves the student's earned and locked badges.
-router.get("/me/badges", ...verifiedStudentGuard, async (req, res) => {
+// ─── POST /me/opportunities/:opportunityId/interest ──────────────────────────
+// Toggles INTERESTED status on an opportunity. Creates the interaction if
+// none exists, removes it if the student is currently INTERESTED.
+router.post("/me/opportunities/:opportunityId/interest", ...verifiedStudentGuard, async (req, res) => {
     try {
-        const badges = await BadgeService.getStudentBadges(req.user!.userId)
-        res.status(200).json({
-            success: true,
-            data: badges
-        })
+        const opportunityId = req.params.opportunityId as string
+        if (!opportunityId) {
+            res.status(400).json({ error: "opportunityId is required" })
+            return
+        }
+        const result = await toggleOpportunityInterest(req.user!.userId, opportunityId)
+        res.status(200).json(result)
     } catch (error: any) {
-        console.error("Get badges error:", error)
-        res.status(500).json({ success: false, message: "Internal server error" })
+        if (error.message?.includes("Cannot remove interest after participating")) {
+            res.status(409).json({ error: error.message })
+        } else {
+            console.error("Toggle interest error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── POST /me/opportunities/:opportunityId/participation ─────────────────────
+// Marks the student as having participated in an opportunity. This is the
+// "mark as completed" action from the student side.
+router.post("/me/opportunities/:opportunityId/participation", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const opportunityId = req.params.opportunityId as string
+        if (!opportunityId) {
+            res.status(400).json({ error: "opportunityId is required" })
+            return
+        }
+        const result = await markOpportunityParticipation(req.user!.userId, opportunityId)
+        res.status(200).json(result)
+    } catch (error: any) {
+        console.error("Mark participation error:", error)
+        res.status(500).json({ error: "Internal server error" })
+    }
+})
+
+// ─── POST /me/opportunities/:opportunityId/feedback ──────────────────────────
+// Submits (or updates) feedback for a completed opportunity. Advances
+// interaction status to FEEDBACK_SUBMITTED.
+// Body: { ratingOverall: number (1–5), comment?: string, isAnonymous?: boolean }
+router.post("/me/opportunities/:opportunityId/feedback", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const opportunityId = req.params.opportunityId as string
+        const { ratingOverall, comment, isAnonymous } = req.body
+
+        if (!opportunityId) {
+            res.status(400).json({ error: "opportunityId is required" })
+            return
+        }
+        if (typeof ratingOverall !== "number" || ratingOverall < 1 || ratingOverall > 5) {
+            res.status(400).json({ error: "ratingOverall must be a number between 1 and 5" })
+            return
+        }
+
+        const result = await submitOpportunityFeedback(req.user!.userId, opportunityId, {
+            ratingOverall,
+            comment,
+            isAnonymous
+        })
+        res.status(200).json(result)
+    } catch (error: any) {
+        if (error.message?.includes("Opportunity not found")) {
+            res.status(404).json({ error: error.message })
+        } else {
+            console.error("Submit feedback error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── GET /me/providers/:providerId ──────────────────────────────────────────
+// Returns public profile for a provider: org name, type, verification status,
+// rating summary (from OpportunityFeedback), and up to 5 recent opportunities.
+// Returns 403 if the provider account is suspended.
+router.get("/me/providers/:providerId", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const providerId = req.params.providerId as string
+        const result = await StudentProviderService.getProviderProfile(providerId)
+        res.status(200).json(result)
+    } catch (error: any) {
+        if (error.message?.includes("Provider not found") || error.message?.includes("Student profile not found")) {
+            res.status(404).json({ error: error.message })
+        } else if (error.message?.includes("Provider account is suspended")) {
+            res.status(403).json({ error: error.message })
+        } else {
+            console.error("Get provider profile error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
+    }
+})
+
+// ─── POST /me/providers/:providerId/report ───────────────────────────────────
+// Submits a report against a provider. Optional opportunityId scopes the report
+// to a specific opportunity. Duplicate PENDING reports for the same reason are
+// rejected with 409.
+// Body: { reason: ReportReason, description: string, opportunityId?: string }
+router.post("/me/providers/:providerId/report", ...verifiedStudentGuard, async (req, res) => {
+    try {
+        const validation = validateRequest(reportProviderSchema, req.body)
+        if (!validation.success) {
+            res.status(400).json({ error: "Validation failed", details: validation.errors })
+            return
+        }
+
+        const result = await StudentProviderService.reportProvider(
+            req.user!.userId,
+            req.params.providerId as string,
+            validation.data
+        )
+        res.status(201).json({ message: "Report submitted successfully", report: result })
+    } catch (error: any) {
+        const isNotFound = [
+            "Provider not found",
+            "Student profile not found",
+            "Opportunity not found"
+        ].some(msg => error.message?.includes(msg))
+
+        const isBadRequest = error.message?.includes("Opportunity does not belong to this provider")
+        const isConflict = error.message?.includes("A pending report with this reason already exists")
+
+        if (isNotFound) {
+            res.status(404).json({ error: error.message })
+        } else if (isBadRequest) {
+            res.status(400).json({ error: error.message })
+        } else if (isConflict) {
+            res.status(409).json({ error: error.message })
+        } else {
+            console.error("Report provider error:", error)
+            res.status(500).json({ error: "Internal server error" })
+        }
     }
 })
 

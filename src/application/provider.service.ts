@@ -153,24 +153,27 @@ async function updateOpportunity(userId: string, opportunityId: string, data: {
 // find the provider profile
 // deleteMany with an ownership check
 async function deleteOpportunity(userId: string, opportunityId: string) {
-    // find provider profile
     const profile = await prisma.providerProfile.findUnique({
         where: { userId }
     })
     if (!profile)
         throw new Error("Profile not found")
 
-    // delete the opportunity if it belongs to that specific provider
-    const result = await prisma.opportunity.deleteMany({
-        where: {
-            id: opportunityId,
-            providerId: profile.id
-        }
+    const opportunity = await prisma.opportunity.findFirst({
+        where: { id: opportunityId, providerId: profile.id }
     })
-    if (result.count === 0)
+    if (!opportunity)
         throw new Error("Opportunity not found or does not belong to your account")
 
-    return result
+    await prisma.$transaction([
+        prisma.feedback.deleteMany({ where: { opportunityId } }),
+        prisma.studentOpportunityInteraction.deleteMany({ where: { opportunityId } }),
+        prisma.opportunityApplication.deleteMany({ where: { opportunityId } }),
+        prisma.opportunityFeedback.deleteMany({ where: { opportunityId } }),
+        prisma.practicalHourEvent.deleteMany({ where: { opportunityId } }),
+        prisma.report.deleteMany({ where: { opportunityId } }),
+        prisma.opportunity.delete({ where: { id: opportunityId } }),
+    ])
 }
 
 // getOpportunityAnalytics returns a specific opportunity along with its

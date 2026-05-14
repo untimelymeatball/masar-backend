@@ -125,8 +125,8 @@ router.put("/opportunities/:id", ...guard, async (req, res) => {
 router.delete("/opportunities/:id", ...guard, async (req, res) => {
     try {
         const { userId } = req.user!
-        const opportunity = await deleteOpportunity(userId, req.params.id as string)
-        res.status(200).json(opportunity)
+        await deleteOpportunity(userId, req.params.id as string)
+        res.status(200).json({ success: true })
     } catch (error: any) {
         res.status(500).json({ error: error.message })
     }
@@ -138,10 +138,7 @@ router.delete("/opportunities/:id", ...guard, async (req, res) => {
 router.get("/me/analytics/summary", ...guard, async (req, res) => {
     try {
         const summary = await ProviderAnalyticsService.getProviderAnalyticsSummary(req.user!.userId)
-        res.status(200).json({
-            success: true,
-            data: summary
-        })
+        res.status(200).json(summary)
     } catch (error: any) {
         console.error("Provider analytics summary error:", error)
         const status = error.statusCode || 500
@@ -158,10 +155,7 @@ router.get("/me/opportunities/:opportunityId/analytics", ...guard, async (req, r
 
     try {
         const analytics = await ProviderAnalyticsService.getOpportunityAnalytics(req.user!.userId, req.params.opportunityId as string)
-        res.status(200).json({
-            success: true,
-            data: analytics
-        })
+        res.status(200).json(analytics)
     } catch (error: any) {
         console.error("Opportunity analytics error:", error)
         const status = error.statusCode || 500

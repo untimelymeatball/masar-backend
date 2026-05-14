@@ -351,12 +351,72 @@ async function getSelectedRoadmaps(userId: string) {
     return { roadmaps }
 }
 
+// ─── 6. addCareer ───────────────────────────────────────────────────────────
+// Appends one career to the student's selections without touching existing ones.
+// Used from the "Explore more roadmaps" section after all current roadmaps are
+// completed. Unlike selectCareers, this never deletes existing selections.
+async function addCareer(userId: string, careerId: string) {
+    // Validate career exists
+    const career = await prisma.careerPath.findUnique({
+        where: { id: careerId },
+        select: { id: true }
+    })
+
+    if (!career) {
+        throw new ServiceError(404, "Career path not found")
+    }
+
+    // Validate career is from the student's latest assessment recommendations
+    const latestResult = await prisma.userAssessmentResult.findFirst({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        select: { careerMatches: true }
+    })
+
+    if (!latestResult) {
+        throw new ServiceError(400, "You must complete the assessment before adding career paths")
+    }
+
+    const storedMatches = latestResult.careerMatches as unknown as StoredCareerMatch[]
+    const recommendedIds = new Set(
+        Array.isArray(storedMatches) ? storedMatches.map(m => m.careerId) : []
+    )
+
+    if (!recommendedIds.has(careerId)) {
+        throw new ServiceError(400, "This career was not in your latest assessment recommendations")
+    }
+
+    // Reject if already selected
+    const existing = await prisma.studentSelectedCareer.findUnique({
+        where: { userId_careerPathId: { userId, careerPathId: careerId } }
+    })
+
+    if (existing) {
+        throw new ServiceError(409, "You have already selected this career path")
+    }
+
+    await prisma.studentSelectedCareer.create({
+        data: { userId, careerPathId: careerId }
+    })
+
+    await GamificationService.awardXp(
+        userId,
+        "ROADMAP_SELECTED",
+        careerId,
+        XP_RULES.ROADMAP_SELECTED,
+        "Selected a career roadmap"
+    )
+
+    return getSelectedCareers(userId)
+}
+
 export {
     getLatestCareerRecommendations,
     selectCareers,
     getSelectedCareers,
     removeSelectedCareer,
-    getSelectedRoadmaps
+    getSelectedRoadmaps,
+    addCareer
 }
 export const CareerSelectionService = {
     getSelectedCareers,
